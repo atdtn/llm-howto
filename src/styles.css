@@ -233,7 +233,9 @@
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+/* Плавная прокрутка включается скриптом после загрузки (js/nav.js): иначе браузер
+   плавно «доезжает» до #раздела при открытии страницы, например после смены языка. */
+html.smooth-scroll { scroll-behavior: smooth; }
 
 body {
   margin: 0;
@@ -1580,7 +1582,8 @@ button.cand-row {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
+  html,
+  html.smooth-scroll { scroll-behavior: auto; }
   .pred-fill,
   .pred-track i,
   .tp-track i,

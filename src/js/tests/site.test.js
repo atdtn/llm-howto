@@ -188,3 +188,11 @@ test('палитры: одинаковый список в theme.js, styles.css 
   assert.deepStrictEqual(headList, PALETTES);
 });
 
+
+test('стили: плавная прокрутка не включена с самого начала (иначе переход к #разделу при загрузке анимируется)', () => {
+  const css = fs.readFileSync(path.join(__dirname, '..', '..', 'styles.css'), 'utf8');
+  assert.ok(!/(^|\n)\s*html\s*\{[^}]*scroll-behavior:\s*smooth/.test(css), 'html { scroll-behavior: smooth } без условия');
+  assert.ok(css.includes('html.smooth-scroll { scroll-behavior: smooth; }'));
+  const nav = fs.readFileSync(path.join(__dirname, '..', 'nav.js'), 'utf8');
+  assert.ok(nav.includes("classList.add('smooth-scroll')"), 'nav.js включает плавную прокрутку после загрузки');
+});

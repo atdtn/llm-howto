@@ -121,7 +121,9 @@
     if (langMenu) {
       langMenu.querySelectorAll('a[hreflang]').forEach((link) => {
         link.addEventListener('click', () => {
-          link.href = withHash(link.getAttribute('href'), global.location.hash);
+          /* Текущий раздел по прокрутке точнее, чем #якорь в адресе: его могло и не быть. */
+          const section = current >= 0 ? links[current].hash : '';
+          link.href = withHash(link.getAttribute('href'), section);
         });
       });
     }
@@ -161,6 +163,12 @@
       }
       header.classList.toggle('is-scrolled', scrollY > 4);
     }
+
+    /* Плавная прокрутка — только после того, как браузер сам перешёл к #разделу при загрузке. */
+    const enableSmooth = () =>
+      global.requestAnimationFrame(() => root.classList.add('smooth-scroll'));
+    if (doc.readyState === 'complete') enableSmooth();
+    else global.addEventListener('load', enableSmooth, { once: true });
 
     const schedule = () => { if (!frame) frame = global.requestAnimationFrame(update); };
     global.addEventListener('scroll', schedule, { passive: true });
