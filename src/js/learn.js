@@ -9,23 +9,25 @@
 
   /*
    * «Оценки» кандидатов: start — в начале обучения, end — в конце.
-   * Париж стартует ниже всех и за 100 шагов становится явным лидером.
+   * Подписи слов берутся из языкового словаря; здесь только идентификаторы.
+   * Париж (ANSWER_ID) стартует ниже всех и за 100 шагов становится явным лидером.
    */
+  const ANSWER_ID = 'paris';
   const LEARNING_CANDIDATES = [
-    { token: 'Париж', start: 0, end: 5 },
-    { token: 'Лондон', start: 2, end: 0.5 },
-    { token: 'Берлин', start: 1.5, end: 0 },
-    { token: 'Мадрид', start: 1, end: 0 },
-    { token: 'Рим', start: 0.5, end: 0 },
+    { id: 'paris', start: 0, end: 5 },
+    { id: 'london', start: 2, end: 0.5 },
+    { id: 'berlin', start: 1.5, end: 0 },
+    { id: 'madrid', start: 1, end: 0 },
+    { id: 'rome', start: 0.5, end: 0 },
   ];
 
   /** Оценки → вероятности. Вычитание максимума защищает от Infinity. */
   function softmax(logits) {
-    if (!Array.isArray(logits)) throw new TypeError('softmax: ожидается массив');
+    if (!Array.isArray(logits)) throw new TypeError('softmax: expected an array');
     if (!logits.length) return [];
     logits.forEach((x) => {
       if (typeof x !== 'number' || !Number.isFinite(x)) {
-        throw new TypeError('softmax: оценки должны быть конечными числами');
+        throw new TypeError('softmax: scores must be finite numbers');
       }
     });
     const max = Math.max(...logits);
@@ -37,17 +39,17 @@
   /** Вероятности кандидатов на данном шаге обучения (0…100). */
   function trainingDistribution(step) {
     if (typeof step !== 'number' || !Number.isFinite(step)) {
-      throw new TypeError('trainingDistribution: шаг должен быть числом');
+      throw new TypeError('trainingDistribution: step must be a number');
     }
     const s = Math.min(LEARNING_MAX_STEP, Math.max(0, step));
     const logits = LEARNING_CANDIDATES.map(
       (c) => c.start + ((c.end - c.start) * s) / LEARNING_MAX_STEP
     );
     const probs = softmax(logits);
-    return LEARNING_CANDIDATES.map((c, i) => ({ token: c.token, p: probs[i] }));
+    return LEARNING_CANDIDATES.map((c, i) => ({ id: c.id, p: probs[i] }));
   }
 
-  const api = { softmax, trainingDistribution, LEARNING_MAX_STEP, LEARNING_CANDIDATES };
+  const api = { softmax, trainingDistribution, LEARNING_MAX_STEP, LEARNING_CANDIDATES, ANSWER_ID };
 
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = api;

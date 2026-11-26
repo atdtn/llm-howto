@@ -5,11 +5,11 @@ const assert = require('node:assert');
 const { euclideanDistance, nearestWords, EMBEDDING_WORDS } = require('../embeddings.js');
 
 const FIXTURE = [
-  { id: 'a', word: 'А', vector: [0, 0] },
-  { id: 'b', word: 'Б', vector: [0, 1] },
-  { id: 'c', word: 'В', vector: [0, 1] },
-  { id: 'd', word: 'Г', vector: [0, 2] },
-  { id: 'e', word: 'Д', vector: [0, 5] },
+  { id: 'a', vector: [0, 0] },
+  { id: 'b', vector: [0, 1] },
+  { id: 'c', vector: [0, 1] },
+  { id: 'd', vector: [0, 2] },
+  { id: 'e', vector: [0, 5] },
 ];
 
 test('euclideanDistance: треугольник 3-4-5', () => {
@@ -24,9 +24,9 @@ test('nearestWords: исключает выбранное слово и возв
   assert.deepStrictEqual(near.map((n) => n.distance), [1, 1, 2]);
 });
 
-test('nearestWords: равные расстояния сортируются по названию', () => {
+test('nearestWords: равные расстояния сортируются по id', () => {
   const near = nearestWords(FIXTURE, 'a');
-  assert.deepStrictEqual(near.map((n) => n.word), ['Б', 'В', 'Г']);
+  assert.deepStrictEqual(near.map((n) => n.id), ['b', 'c', 'd']);
 });
 
 test('nearestWords: встроенный набор содержит восемь корректных слов', () => {

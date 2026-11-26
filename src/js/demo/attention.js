@@ -4,12 +4,11 @@
 (function () {
   window.Demos = window.Demos || {};
 
-  const WORDS = ['Кот', 'который', 'сидел', 'на', 'подоконнике', 'уронил', 'цветок'];
-
   /*
    * Упрощённая карта внимания: строка — слово, которое «смотрит»,
    * столбец — слово, на которое смотрят. Веса от 0 до 1.
    * У настоящей модели такие веса вычисляются сами.
+   * Слова берутся из языкового словаря; порядок в нём должен совпадать с матрицей.
    */
   const WEIGHTS = [
     [1.0, 0.6, 0.1, 0.2, 0.1, 0.3, 0.2],
@@ -21,13 +20,17 @@
     [0.2, 0.1, 0.1, 0.1, 0.3, 0.9, 1.0],
   ];
 
-  const DEFAULT_CAPTION = 'Наведи курсор, коснись слова или выбери его клавишей Tab.';
-
   window.Demos.attention = {
     init() {
+      const { t, locale } = window.LLM_I18N;
       const host = document.getElementById('attention-sentence');
       const caption = document.getElementById('attention-caption');
       if (!host || !caption) return;
+
+      const WORDS = locale.data.attentionWords;
+      const NAMES = locale.data.attentionNames;
+      const COMMA_AFTER = locale.data.attentionCommaAfter;
+      const DEFAULT_CAPTION = t('attention.caption');
 
       const spans = [];
 
@@ -38,17 +41,16 @@
         span.dataset.index = String(index);
         span.tabIndex = 0;
         span.setAttribute('role', 'button');
-        span.setAttribute('aria-label', 'Показать, на что смотрит слово «' + WORDS[index].toLowerCase() + '»');
+        span.setAttribute('aria-label', t('attention.ariaLabel', { word: NAMES[index] }));
         host.appendChild(span);
         spans[index] = span;
       };
 
       const build = () => {
         host.textContent = '';
-        const punctAfter = { 0: ', ', 4: ', ' };
         for (let i = 0; i < WORDS.length; i++) {
           addWord(i);
-          if (punctAfter[i]) host.appendChild(document.createTextNode(punctAfter[i]));
+          if (COMMA_AFTER.includes(i)) host.appendChild(document.createTextNode(', '));
           else if (i === WORDS.length - 1) host.appendChild(document.createTextNode('.'));
           else host.appendChild(document.createTextNode(' '));
         }
@@ -80,11 +82,13 @@
           .sort((a, b) => b.weight - a.weight)
           .slice(0, 2);
 
-        const names = ranked
-          .map((item) => '«' + WORDS[item.j].toLowerCase() + '» (' + Math.round(item.weight * 100) + '%)')
-          .join(' и ');
+        const list = ranked
+          .map((item) =>
+            t('attention.item', { word: NAMES[item.j], pct: Math.round(item.weight * 100) })
+          )
+          .join(t('attention.and'));
 
-        caption.textContent = '«' + WORDS[index].toLowerCase() + '» смотрит на ' + names + '.';
+        caption.textContent = t('attention.focus', { word: NAMES[index], list });
       };
 
       build();

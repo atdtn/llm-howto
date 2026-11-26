@@ -16,7 +16,7 @@
 
   function requirePositiveInt(value, name) {
     if (!Number.isInteger(value) || value <= 0) {
-      throw new TypeError(name + ': ожидается положительное целое число');
+      throw new TypeError(name + ': expected a positive integer');
     }
   }
 

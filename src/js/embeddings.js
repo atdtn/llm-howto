@@ -5,24 +5,25 @@
  * Два числа на слово — только для наглядности: у настоящей модели их сотни.
  */
 (function (global) {
+  /* Только идентификаторы и координаты; подписи слов — в языковых словарях. */
   const EMBEDDING_WORDS = [
-    { id: 'kot', word: 'кот', vector: [0.7, 0.78] },
-    { id: 'koshka', word: 'кошка', vector: [0.8, 0.68] },
-    { id: 'pes', word: 'пёс', vector: [0.72, 0.3] },
-    { id: 'sobaka', word: 'собака', vector: [0.6, 0.22] },
-    { id: 'yabloko', word: 'яблоко', vector: [0.24, 0.74] },
-    { id: 'grusha', word: 'груша', vector: [0.16, 0.66] },
-    { id: 'apelsin', word: 'апельсин', vector: [0.3, 0.86] },
-    { id: 'banan', word: 'банан', vector: [0.12, 0.54] },
+    { id: 'kot', vector: [0.7, 0.78] },
+    { id: 'koshka', vector: [0.8, 0.68] },
+    { id: 'pes', vector: [0.72, 0.3] },
+    { id: 'sobaka', vector: [0.6, 0.22] },
+    { id: 'yabloko', vector: [0.24, 0.74] },
+    { id: 'grusha', vector: [0.16, 0.66] },
+    { id: 'apelsin', vector: [0.3, 0.86] },
+    { id: 'banan', vector: [0.12, 0.54] },
   ];
 
   function checkVector(vector, name) {
     if (!Array.isArray(vector) || !vector.length) {
-      throw new TypeError(name + ': вектор должен быть непустым массивом');
+      throw new TypeError(name + ': vector must be a non-empty array');
     }
     vector.forEach((x) => {
       if (typeof x !== 'number' || !Number.isFinite(x)) {
-        throw new TypeError(name + ': координаты должны быть конечными числами');
+        throw new TypeError(name + ': coordinates must be finite numbers');
       }
     });
   }
@@ -31,7 +32,7 @@
     checkVector(a, 'euclideanDistance');
     checkVector(b, 'euclideanDistance');
     if (a.length !== b.length) {
-      throw new TypeError('euclideanDistance: векторы разной длины');
+      throw new TypeError('euclideanDistance: vectors have different lengths');
     }
     let sum = 0;
     for (let i = 0; i < a.length; i++) {
@@ -43,30 +44,29 @@
 
   /** Ближайшие слова к выбранному: новые объекты, исходный массив не меняется. */
   function nearestWords(words, selectedId, limit) {
-    if (!Array.isArray(words)) throw new TypeError('nearestWords: ожидается массив слов');
+    if (!Array.isArray(words)) throw new TypeError('nearestWords: expected an array of words');
     const count = limit === undefined ? 3 : limit;
     if (!Number.isInteger(count) || count <= 0) {
-      throw new TypeError('nearestWords: limit должен быть положительным целым');
+      throw new TypeError('nearestWords: limit must be a positive integer');
     }
 
     const selected = words.find((w) => w && w.id === selectedId);
-    if (!selected) throw new TypeError('nearestWords: неизвестный id ' + selectedId);
+    if (!selected) throw new TypeError('nearestWords: unknown id ' + selectedId);
     checkVector(selected.vector, 'nearestWords');
 
     return words
       .filter((w) => w && w.id !== selectedId)
       .map((w) => {
-        if (typeof w.id !== 'string' || typeof w.word !== 'string') {
-          throw new TypeError('nearestWords: у слова нет id или word');
+        if (typeof w.id !== 'string') {
+          throw new TypeError('nearestWords: word has no id');
         }
         return {
           id: w.id,
-          word: w.word,
           vector: w.vector.slice(),
           distance: euclideanDistance(selected.vector, w.vector),
         };
       })
-      .sort((a, b) => a.distance - b.distance || a.word.localeCompare(b.word, 'ru'))
+      .sort((a, b) => a.distance - b.distance || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
       .slice(0, count);
   }
 

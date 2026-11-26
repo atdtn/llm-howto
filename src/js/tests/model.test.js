@@ -143,3 +143,8 @@ test('generate: maxTokens 0 возвращает только промпт и п
   assert.deepStrictEqual(tokens, ['дед', 'бил']);
   assert.deepStrictEqual(steps, []);
 });
+
+test('tokenize: буквы с умлаутами, ß и ё считаются частью слова', () => {
+  assert.deepStrictEqual(tokenize('Schlüssel, Größe! Ёж'), ['schlüssel', 'größe', 'ёж']);
+  assert.deepStrictEqual(tokenizeForDisplay('Straße!'), ['Straße', '!']);
+});

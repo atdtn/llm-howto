@@ -4,50 +4,12 @@
 (function () {
   window.Demos = window.Demos || {};
 
-  const STAGES = [
-    {
-      id: 'tok',
-      name: 'Токены',
-      tag: 'вход',
-      text: 'Текст превращается в последовательность номеров — токенов. Дальше модель работает только с номерами.',
-    },
-    {
-      id: 'emb',
-      name: 'Эмбеддинг',
-      tag: 'числа смысла',
-      text: 'Каждый номер превращается в набор чисел — вектор. Похожие слова получают похожие наборы.',
-    },
-    {
-      id: 'blk',
-      name: 'Блоки трансформера, ×N',
-      tag: 'основная часть',
-      text: 'Блоки много раз уточняют представления слов. Внутри — внимание, которое переносит сведения между словами, и небольшая сеть, которая обрабатывает каждое слово отдельно.',
-    },
-    {
-      id: 'out',
-      name: 'Выходной слой',
-      tag: 'оценки',
-      text: 'Для каждого возможного следующего токена модель получает оценку: насколько он уместен.',
-    },
-    {
-      id: 'sm',
-      name: 'Softmax',
-      tag: 'вероятности',
-      text: 'Оценки превращаются в вероятности, которые в сумме дают 100%. Из них и выбирается следующее слово.',
-    },
-  ];
-
-  function fmtParams(n) {
-    if (n >= 1e9) return (n / 1e9).toFixed(1).replace('.', ',') + ' млрд';
-    return new Intl.NumberFormat('ru-RU').format(Math.round(n / 1e6)) + ' млн';
-  }
-
-  function fmtSize(gb) {
-    return gb.toFixed(1).replace('.', ',') + ' ГБ';
-  }
+  /* Порядок этапов фиксирован; тексты берутся из словаря по id. */
+  const STAGE_IDS = ['tok', 'emb', 'blk', 'out', 'sm'];
 
   window.Demos.inside = {
     init() {
+      const { t, num } = window.LLM_I18N;
       const host = document.getElementById('inside-stages');
       const description = document.getElementById('inside-description');
       const layers = document.getElementById('params-layers');
@@ -64,23 +26,28 @@
 
       const buttons = [];
 
+      const fmtParams = (n) => {
+        if (n >= 1e9) return num(n / 1e9, 1) + ' ' + t('units.bn');
+        return num(Math.round(n / 1e6)) + ' ' + t('units.mn');
+      };
+      const fmtSize = (gb) => num(gb, 1) + ' ' + t('units.gb');
+
       const updateStages = () => {
         buttons.forEach((button, i) => {
-          button.setAttribute('aria-pressed', String(STAGES[i].id === selected));
+          button.setAttribute('aria-pressed', String(STAGE_IDS[i] === selected));
         });
 
-        const stage = STAGES.find((s) => s.id === selected);
         description.textContent = '';
         const title = document.createElement('p');
         const strong = document.createElement('strong');
-        strong.textContent = stage.name + ' — ';
-        title.append(strong, stage.text);
+        strong.textContent = t('stage.' + selected + '.name') + ' — ';
+        title.append(strong, t('stage.' + selected + '.text'));
         description.appendChild(title);
       };
 
       const buildStages = () => {
         host.textContent = '';
-        STAGES.forEach((stage, i) => {
+        STAGE_IDS.forEach((id, i) => {
           if (i > 0) {
             const arrow = document.createElement('div');
             arrow.className = 'stage-arrow';
@@ -96,15 +63,15 @@
 
           const name = document.createElement('span');
           name.className = 'stage-name';
-          name.textContent = stage.name;
+          name.textContent = t('stage.' + id + '.name');
 
           const tag = document.createElement('span');
           tag.className = 'stage-tag';
-          tag.textContent = stage.tag;
+          tag.textContent = t('stage.' + id + '.tag');
 
           button.append(name, tag);
           button.addEventListener('click', () => {
-            selected = stage.id;
+            selected = id;
             updateStages();
           });
           host.appendChild(button);
@@ -145,6 +112,7 @@
 
       buildStages();
       updateStages();
-      renderParams();    },
+      renderParams();
+    },
   };
 })();

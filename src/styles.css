@@ -58,6 +58,83 @@ body {
   padding: 72px 0 40px;
 }
 
+/* Language switcher: обычные ссылки между языковыми страницами, работают и без JavaScript. */
+
+.top-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 16px;
+  margin-bottom: 28px;
+}
+
+.lang-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+
+/* Ссылка на GitHub: «таблетка» с логотипом. */
+
+.gh-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--shadow);
+  transition: color 0.15s, border-color 0.15s, transform 0.15s;
+}
+
+.gh-link:hover {
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.gh-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.gh-icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.footer .footer-links {
+  margin: 14px 0 0;
+}
+
+.gh-link-inline { box-shadow: none; }
+
+.lang-switch a {
+  padding: 4px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  text-decoration: none;
+  background: var(--card);
+}
+
+.lang-switch a:hover { color: var(--accent); border-color: var(--accent); }
+
+.lang-switch a.is-current {
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 600;
+}
+
 .kicker {
   margin: 0 0 14px;
   font-size: 0.78rem;

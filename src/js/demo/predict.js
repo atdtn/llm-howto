@@ -6,18 +6,19 @@
 
   window.Demos.predict = {
     init(model) {
+      const { t } = window.LLM_I18N;
       const input = document.getElementById('predict-input');
       const out = document.getElementById('predict-out');
       const note = document.getElementById('predict-note');
       if (!input || !out || !note) return;
 
       const render = () => {
-        const contextTokens = window.LLM.tokenize(input.value);
+        const typedTokens = window.LLM.tokenize(input.value);
         const { items, source } = window.LLM.predictNext(model, input.value);
         out.textContent = '';
 
         if (!items.length) {
-          note.textContent = 'Печатай — и появятся варианты продолжения.';
+          note.textContent = t('predict.empty');
           return;
         }
 
@@ -48,20 +49,17 @@
         });
 
         if (!input.value.trim()) {
-          note.textContent = 'Пока пусто — вот самые частые слова во встроенном тексте.';
+          note.textContent = t('predict.emptyInput');
         } else if (source === 'unigram') {
-          note.textContent =
-            'Такой фразы во встроенном тексте не было. Модель честно откатилась к самым частым словам — это её способ сказать «не знаю».';
-        } else if (source === 'bigram' && contextTokens.length <= 1) {
-          note.textContent = 'Модель узнала слово и вспомнила, что обычно идёт после него.';
+          note.textContent = t('predict.unknown');
+        } else if (source === 'bigram' && typedTokens.length <= 1) {
+          note.textContent = t('predict.bigramShort');
         } else if (source === 'bigram') {
-          note.textContent =
-            'Такой пары слов модель не видела, но помнит, что бывает после последнего слова.';
+          note.textContent = t('predict.bigram');
         } else if (source === 'trigram') {
-          note.textContent = 'Модель узнала эту пару слов и вспомнила, что обычно идёт после неё.';
+          note.textContent = t('predict.trigram');
         } else {
-          note.textContent =
-            'Так модель видит свой следующий шаг: у каждого слова — своя вероятность.';
+          note.textContent = t('predict.fallback');
         }
       };
 

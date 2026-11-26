@@ -12,6 +12,7 @@
 
   window.Demos.generate = {
     init(model) {
+      const { t } = window.LLM_I18N;
       const input = document.getElementById('generate-input');
       const startBtn = document.getElementById('generate-start');
       const moreBtn = document.getElementById('generate-more');
@@ -67,7 +68,7 @@
         const row = document.createElement(clickable ? 'button' : 'div');
         if (clickable) {
           row.type = 'button';
-          row.setAttribute('aria-label', 'Выбрать слово «' + item.token + '»');
+          row.setAttribute('aria-label', t('generate.pickAria', { word: item.token }));
         }
         row.className =
           'cand-row' + (clickable ? ' is-clickable' : '') + (isChosen ? ' is-chosen' : '');
@@ -89,15 +90,13 @@
         title.className = 'cand-title';
 
         if (!pending) {
-          title.textContent = 'Модель не нашла, что добавить.';
+          title.textContent = t('generate.noNext');
           candidates.appendChild(title);
           return;
         }
 
         const auto = state.mode === 'auto';
-        title.textContent = auto
-          ? 'Модель выбирает из:'
-          : 'Нажми слово, чтобы продолжить самому:';
+        title.textContent = auto ? t('generate.autoPrompt') : t('generate.pickPrompt');
         candidates.appendChild(title);
 
         pending.dist.slice(0, 4).forEach((item) => {
@@ -111,7 +110,7 @@
         startBtn.disabled = auto;
         moreBtn.disabled = auto;
         pauseBtn.disabled = !auto && !paused;
-        pauseBtn.textContent = paused ? 'Продолжить' : 'Пауза';
+        pauseBtn.textContent = paused ? t('generate.resume') : t('generate.pause');
         input.disabled = auto || paused;
       };
 
@@ -156,7 +155,7 @@
           candidates.textContent = '';
           const note = document.createElement('p');
           note.className = 'cand-title';
-          note.textContent = 'Хватит: нажми «Сброс» и начни заново.';
+          note.textContent = t('generate.enough');
           candidates.appendChild(note);
           return;
         }

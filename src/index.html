@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="meta.title">How Language Models Work — Visually</title>
+  <meta name="description" content="" data-i18n-attr="content:meta.description">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="top-bar">
+        <!-- language-switcher -->
+        <a class="gh-link" href="https://github.com/atdtn/llm-howto" target="_blank" rel="noopener"><svg class="gh-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span data-i18n="github.label">View on GitHub</span></a>
+      </div>
+      <p class="kicker" data-i18n="hero.kicker">An explainer without formulas</p>
+      <h1 data-i18n-html="hero.title">How language<br>models work</h1>
+      <p class="lead" data-i18n="hero.lead">Chatbots, translators, autocomplete on your phone — they are all language models. Here you can get hands-on with the core idea behind them.</p>
+      <p class="hero-callout" data-i18n="hero.callout">The main idea: a model is a machine that guesses the next word. Everything else is detail on top of that guess.</p>
+    </div>
+  </header>
+
+  <nav class="toc" data-i18n-attr="aria-label:toc.label" aria-label="Sections">
+    <div class="wrap">
+      <a href="#predict" data-i18n="toc.predict">01 Guess the next word</a>
+      <a href="#tokens" data-i18n="toc.tokens">02 Tokens</a>
+      <a href="#context" data-i18n="toc.context">03 Context</a>
+      <a href="#attention" data-i18n="toc.attention">04 Attention</a>
+      <a href="#generate" data-i18n="toc.generate">05 One token at a time</a>
+      <a href="#temperature" data-i18n="toc.temperature">06 Temperature</a>
+      <a href="#learn" data-i18n="toc.learn">07 Learning</a>
+      <a href="#inside" data-i18n="toc.inside">08 Inside</a>
+      <a href="#finale" data-i18n="toc.finale">09 Wrap-up</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+
+    <section id="predict">
+      <p class="num">01</p>
+      <h2 data-i18n="predict.title">The model guesses the next word</h2>
+      <p data-i18n="predict.p1">A language model is a program that reads text and predicts which word comes next. When your phone suggests the next word, you have already seen a model like this at work. A large model does the same thing, but it has read so much text that its guesses are much better.</p>
+      <p data-i18n="predict.p2">Try it: start a phrase, and the model will show the words it considers likely. The bars show probability: the longer the bar, the more confident the model is.</p>
+
+      <div class="demo" id="demo-predict">
+        <label class="field-label" for="predict-input" data-i18n="predict.inputLabel">Start a phrase</label>
+        <input id="predict-input" class="text-input" value="the gingerbread" data-i18n-value="predict.defaultInput" autocomplete="off" spellcheck="false">
+        <div class="predict-out" id="predict-out" aria-live="polite"></div>
+        <p class="demo-note" id="predict-note"></p>
+      </div>
+
+      <p class="bridge" data-i18n="predict.bridge">But first the text has to be turned into numbers. We'll get to that next.</p>
+    </section>
+
+    <section id="tokens">
+      <p class="num">02</p>
+      <h2 data-i18n="tokens.title">The model sees tokens, not words</h2>
+      <p data-i18n="tokens.p1">The model does not see whole words, let alone letters. Before any work, the text is cut into pieces called tokens. A token often matches a word, but it can also be part of a word or a punctuation mark.</p>
+      <p data-i18n="tokens.p2">Each piece has a number. The model works with numbers: a line of text becomes a sequence of numbers, and only then does the guessing begin.</p>
+
+      <div class="demo">
+        <label class="field-label" for="tokens-input" data-i18n="tokens.inputLabel">Text</label>
+        <textarea id="tokens-input" class="text-input" rows="2" spellcheck="false" data-i18n-value="tokens.defaultText">Hello, world! Language models read text in pieces.</textarea>
+        <div class="token-chips" id="tokens-out"></div>
+        <p class="demo-note" id="tokens-note"></p>
+      </div>
+
+      <p class="bridge" data-i18n="tokens.bridge">The numbers alone do not carry meaning yet: meaning appears next to other words.</p>
+    </section>
+
+    <section id="context">
+      <p class="num">03</p>
+      <h2 data-i18n="context.title">Meaning comes from context</h2>
+      <p data-i18n="context.p1">The same word can mean different things. The model works out which meaning is meant from the words around it.</p>
+      <p data-i18n="context.p2">The word “key” next to a door and a lock is the thing that opens the door. Next to a violin and sheet music, it is the sign at the start of a staff. For the model these are two different meanings, and the difference comes from context.</p>
+
+      <div class="demo">
+        <div class="context-switch" role="tablist" data-i18n-attr="aria-label:context.tabsLabel" aria-label="Contexts of the word “key”">
+          <button class="context-tab is-active" data-context="door" role="tab" aria-selected="true" data-i18n="context.tab.door">a door key</button>
+          <button class="context-tab" data-context="music" role="tab" aria-selected="false" data-i18n="context.tab.music">a treble clef</button>
+        </div>
+        <p class="context-sentence" id="context-sentence"></p>
+        <p class="field-label" data-i18n="context.neighborsLabel">Words the model considers close:</p>
+        <div class="neighbor-chips" id="context-out"></div>
+        <p class="demo-note" data-i18n="context.note">This is an illustration. A real model stores word meanings as sets of numbers and finds close neighbours on its own.</p>
+      </div>
+
+      <h3 class="subhead" data-i18n="context.subhead">How meaning is stored in numbers</h3>
+      <p data-i18n="context.p3">The model replaces each word with a set of numbers called a vector. Words with similar meanings get similar vectors, so “cat” ends up near “kitten”, and “apple” near “pear”.</p>
+
+      <div class="demo">
+        <div class="embedding-layout">
+          <div class="embedding-plot" id="embedding-plot" role="group" data-i18n-attr="aria-label:embeddings.mapLabel" aria-label="A schematic word map"></div>
+          <div class="embedding-info">
+            <p class="field-label"><span data-i18n="embeddings.selected">Selected:</span> <strong id="embedding-word"></strong></p>
+            <p class="embedding-vector" id="embedding-vector"></p>
+            <p class="field-label" data-i18n="embeddings.nearest">Nearest words:</p>
+            <ul class="embedding-near" id="embedding-near"></ul>
+          </div>
+        </div>
+        <p class="demo-note" data-i18n="embeddings.note">This is a schematic plane with two numbers. A real model uses hundreds or thousands of numbers per word, and context keeps changing that representation.</p>
+      </div>
+
+      <p class="bridge" data-i18n="context.bridge">A set of numbers is only the start: now the model has to link the words together.</p>
+    </section>
+
+    <section id="attention">
+      <p class="num">04</p>
+      <h2 data-i18n="attention.title">Attention links the words together</h2>
+      <p data-i18n="attention.p1">To understand a sentence, the model has to connect its words to each other. This mechanism is called attention: each word “looks at” the others and decides which of them matter most for its meaning.</p>
+      <p data-i18n="attention.p2">Hover over a word, tap it on a phone, or select it with Tab, and the words it attends to light up. The picture is simplified: in a real model these links are computed automatically, and there are millions of them.</p>
+
+      <div class="demo">
+        <div class="attention-sentence" id="attention-sentence"></div>
+        <p class="demo-note" id="attention-caption" aria-live="polite" data-i18n="attention.caption">Hover over a word, tap it, or select it with Tab.</p>
+      </div>
+
+      <p class="bridge" data-i18n="attention.bridge">Once the words are linked, the model can pick the next token — and repeat.</p>
+    </section>
+
+    <section id="generate">
+      <p class="num">05</p>
+      <h2 data-i18n="generate.title">One token at a time</h2>
+      <p data-i18n="generate.p1">The model doesn't write the whole answer at once. It takes one small step — picks the next word — and adds it to the text. Then it looks at everything written so far again and takes the next step.</p>
+      <p data-i18n="generate.p2">Press “Generate” and watch how separate guesses add up to a sentence. Or pick the word yourself: click one of the options, and the model continues from it.</p>
+
+      <div class="demo">
+        <div class="generate-controls">
+          <input id="generate-input" class="text-input" value="once upon a" data-i18n-value="generate.defaultInput" spellcheck="false" data-i18n-attr="aria-label:generate.inputLabel">
+          <button class="btn" id="generate-start" data-i18n="generate.start">Generate</button>
+          <button class="btn btn-ghost" id="generate-more" data-i18n="generate.more">10 more</button>
+          <button class="btn btn-ghost" id="generate-pause" disabled data-i18n="generate.pause">Pause</button>
+          <button class="btn btn-ghost" id="generate-reset" data-i18n="generate.reset">Reset</button>
+        </div>
+        <div class="generate-body">
+          <div class="generate-text" id="generate-output" aria-live="polite"></div>
+          <div class="generate-candidates" id="generate-candidates"></div>
+        </div>
+        <p class="demo-note" data-i18n="generate.note">“10 more” adds exactly ten words: the toy model knows no punctuation and cannot stop at a full stop. A real model can.</p>
+      </div>
+
+      <p class="bridge" data-i18n="generate.bridge">The same candidates can be picked more cautiously or more boldly.</p>
+    </section>
+
+    <section id="temperature">
+      <p class="num">06</p>
+      <h2 data-i18n="temperature.title">Temperature: cautious or bold</h2>
+      <p data-i18n="temperature.p1">The model always has a choice: take the most likely word, or risk a less obvious one. The temperature setting controls how much risk it takes.</p>
+      <p data-i18n="temperature.p2">Low temperature — predictable and cautious. High — bolder and more surprising, but sometimes strange. Move the slider: it changes the middle column.</p>
+
+      <div class="demo">
+        <label class="field-label" for="temp-slider"><span data-i18n="temperature.sliderLabel">Temperature:</span> <span id="temp-value">1.0</span></label>
+        <input type="range" id="temp-slider" min="0" max="2" step="0.1" value="1">
+        <div class="temp-columns" id="temp-columns"></div>
+        <p class="demo-note" data-i18n="temperature.note">Same starting point, different distributions. On the left the model barely takes a risk; on the right it considers rare options. The length of each bar is the probability of a word.</p>
+      </div>
+
+      <p class="bridge" data-i18n="temperature.bridge">But where do the probabilities come from in the first place? They are tuned during training.</p>
+    </section>
+
+    <section id="learn">
+      <p class="num">07</p>
+      <h2 data-i18n="learn.title">How the model learns</h2>
+      <p data-i18n="learn.p1">No one hands the model ready-made rules. Nobody writes “the capital of France is Paris” into it. During training it adjusts its numbers so that correct continuations become more likely and wrong ones less likely.</p>
+      <p data-i18n="learn.p2">Below are five imaginary answers. At the start of training the model barely tells the correct one from the rest. Move the “training steps” slider and watch the probability of Paris grow.</p>
+
+      <div class="demo">
+        <label class="field-label" for="learn-slider"><span data-i18n="learn.sliderLabel">Training steps:</span> <output id="learn-step">0</output></label>
+        <input type="range" id="learn-slider" min="0" max="100" step="1" value="0">
+        <div class="learn-list" id="learn-out" aria-live="polite"></div>
+        <p class="demo-note" data-i18n="learn.note">The numbers are illustrative: this is not a record of real training, but a picture of how adjusting the numbers shifts the probabilities. A real model has billions of parameters, and every step moves all of them.</p>
+      </div>
+
+      <p class="bridge" data-i18n="learn.bridge">What exactly gets adjusted during training? Let's look at the model's structure as a whole.</p>
+    </section>
+
+    <section id="inside">
+      <p class="num">08</p>
+      <h2 data-i18n="inside.title">What's inside</h2>
+      <p data-i18n="inside.p1">Inside, the model is a long chain of similar blocks. Everything it “knows” is stored in numbers — parameters. Click a stage to see what happens there.</p>
+
+      <div class="demo">
+        <div class="architecture-stages" id="inside-stages" role="group" data-i18n-attr="aria-label:inside.stagesLabel" aria-label="Stages of the model"></div>
+        <div class="stage-description" id="inside-description" aria-live="polite"></div>
+      </div>
+
+      <p data-i18n="inside.p2">Two numbers set the size of a model: how many layers it has and how wide its vectors are. Move the sliders and the estimates are recalculated.</p>
+
+      <div class="demo">
+        <div class="params-presets" role="group" data-i18n-attr="aria-label:inside.presetsLabel" aria-label="Model size">
+          <button class="context-tab" data-preset="small" aria-pressed="false" data-i18n="inside.preset.small">Small</button>
+          <button class="context-tab is-active" data-preset="medium" aria-pressed="true" data-i18n="inside.preset.medium">Medium</button>
+          <button class="context-tab" data-preset="large" aria-pressed="false" data-i18n="inside.preset.large">Large</button>
+        </div>
+
+        <label class="field-label" for="params-layers"><span data-i18n="inside.layers">Layers:</span> <output id="params-layers-value">32</output></label>
+        <input type="range" id="params-layers" min="4" max="96" step="1" value="32">
+
+        <label class="field-label" for="params-width"><span data-i18n="inside.width">Vector width:</span> <output id="params-width-value">4096</output></label>
+        <input type="range" id="params-width" min="512" max="8192" step="256" value="4096">
+
+        <div class="params-results">
+          <p><span data-i18n="inside.params">Parameters:</span> <strong id="params-count"></strong></p>
+          <p><span data-i18n="inside.size">File size:</span> <strong id="params-size"></strong></p>
+        </div>
+
+        <details class="formula">
+          <summary data-i18n="inside.formulaSummary">Where the numbers come from</summary>
+          <p data-i18n="inside.formula">Estimate: 12 · L · d² parameters in the blocks plus 2 · V · d in the embeddings and output layer, where L is the number of layers, d the width and V the vocabulary size (here 50,000). File size is 2 bytes per parameter (fp16).</p>
+          <p data-i18n="inside.formulaNote">This is a simplification: real models have extra components, and a running model needs more memory than its weight file.</p>
+        </details>
+
+        <p class="demo-note" data-i18n="inside.note">The estimate is approximate. Gigabytes are decimal, as on a disk label.</p>
+      </div>
+
+      <p class="bridge" data-i18n="inside.bridge">Now let's put it all into one picture — and recall the main limitation.</p>
+    </section>
+
+    <section id="finale">
+      <p class="num">09</p>
+      <h2 data-i18n="finale.title">And that's all?</h2>
+      <p data-i18n="finale.p1">More or less, yes. A large model differs from our toy in scale: it has read nearly the whole internet and learned to notice subtle links between words. But the principle is the same: predict the next word, add it, repeat.</p>
+      <p data-i18n="finale.p2">Why does it sometimes get things wrong? Because it guesses what is plausible, not what is true. A convincing falsehood is a direct consequence of how it works, not a glitch.</p>
+      <div class="recap">
+        <p class="recap-title" data-i18n="recap.title">What to remember</p>
+        <ul>
+          <li data-i18n="recap.1">The model predicts the next word from probabilities.</li>
+          <li data-i18n="recap.2">Text is cut into tokens, and the model works with their numbers.</li>
+          <li data-i18n="recap.3">A word’s meaning depends on context, and attention links words together.</li>
+          <li data-i18n="recap.4">The answer is assembled one token per step.</li>
+          <li data-i18n="recap.5">Temperature decides how much risk the model takes when it chooses.</li>
+          <li data-i18n="recap.6">The probabilities are not set from the start: training tunes them.</li>
+          <li data-i18n="recap.7">The model’s knowledge is stored as numeric parameters; layers and width set its scale.</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p data-i18n="footer.text">Demos 01, 05 and 06 count word frequencies in a small built-in text: it is a toy model, not a neural network. Training, the word map and the size estimate are separate illustrations, with numbers chosen for clarity. Everything runs in your browser; after the page loads, no server is needed.</p>
+      <p class="footer-links"><a class="gh-link gh-link-inline" href="https://github.com/atdtn/llm-howto" target="_blank" rel="noopener"><svg class="gh-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span data-i18n="github.label">View on GitHub</span></a></p>
+    </div>
+  </footer>
+
+  <!-- locale-scripts -->
+  <script src="js/i18n.js"></script>
+  <script src="js/model.js"></script>
+  <script src="js/learn.js"></script>
+  <script src="js/params.js"></script>
+  <script src="js/embeddings.js"></script>
+  <script src="js/generation.js"></script>
+  <script src="js/demo/predict.js"></script>
+  <script src="js/demo/tokens.js"></script>
+  <script src="js/demo/context.js"></script>
+  <script src="js/demo/embeddings.js"></script>
+  <script src="js/demo/attention.js"></script>
+  <script src="js/demo/generate.js"></script>
+  <script src="js/demo/temperature.js"></script>
+  <script src="js/demo/learn.js"></script>
+  <script src="js/demo/inside.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

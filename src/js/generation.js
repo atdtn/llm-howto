@@ -13,26 +13,26 @@
 
   function checkState(state) {
     if (!state || typeof state !== 'object') {
-      throw new TypeError('transitionPlayback: ожидается состояние');
+      throw new TypeError('transitionPlayback: expected a state');
     }
     if (!MODES.includes(state.mode)) {
-      throw new TypeError('transitionPlayback: неизвестный режим ' + state.mode);
+      throw new TypeError('transitionPlayback: unknown mode ' + state.mode);
     }
     if (!Number.isInteger(state.remaining) || state.remaining < 0) {
-      throw new TypeError('transitionPlayback: некорректный remaining');
+      throw new TypeError('transitionPlayback: invalid remaining');
     }
   }
 
   function transitionPlayback(state, event) {
     checkState(state);
     if (!event || typeof event.type !== 'string') {
-      throw new TypeError('transitionPlayback: ожидается событие');
+      throw new TypeError('transitionPlayback: expected an event');
     }
 
     switch (event.type) {
       case 'start': {
         if (!Number.isInteger(event.count) || event.count <= 0) {
-          throw new TypeError('transitionPlayback: count должен быть положительным целым');
+          throw new TypeError('transitionPlayback: count must be a positive integer');
         }
         return { mode: 'auto', remaining: event.count };
       }
@@ -54,7 +54,7 @@
       case 'reset':
         return { mode: 'idle', remaining: 0 };
       default:
-        throw new TypeError('transitionPlayback: неизвестное событие ' + event.type);
+        throw new TypeError('transitionPlayback: unknown event ' + event.type);
     }
   }
 

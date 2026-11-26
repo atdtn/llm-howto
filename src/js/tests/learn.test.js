@@ -27,28 +27,28 @@ test('softmax: пустой вход и некорректные оценки', 
   assert.throws(() => softmax([Infinity, 1]), TypeError);
 });
 
-test('trainingDistribution: в начале Париж наименее вероятен', () => {
+test('trainingDistribution: в начале Париж (paris) наименее вероятен', () => {
   const dist = trainingDistribution(0);
   assert.strictEqual(dist.length, LEARNING_CANDIDATES.length);
   const sum = dist.reduce((acc, d) => acc + d.p, 0);
   assert.ok(Math.abs(sum - 1) < EPS);
-  const paris = dist.find((d) => d.token === 'Париж');
+  const paris = dist.find((d) => d.id === 'paris');
   assert.ok(paris.p < 0.1);
   dist.forEach((d) => {
-    if (d.token !== 'Париж') assert.ok(d.p > paris.p);
+    if (d.id !== 'paris') assert.ok(d.p > paris.p);
   });
 });
 
 test('trainingDistribution: в конце Париж доминирует', () => {
   const dist = trainingDistribution(LEARNING_MAX_STEP);
-  const paris = dist.find((d) => d.token === 'Париж');
+  const paris = dist.find((d) => d.id === 'paris');
   assert.ok(paris.p > 0.95);
   const max = Math.max(...dist.map((d) => d.p));
   assert.strictEqual(paris.p, max);
 });
 
 test('trainingDistribution: вероятность Парижа растёт, шаг ограничен диапазоном', () => {
-  const p = (step) => trainingDistribution(step).find((d) => d.token === 'Париж').p;
+  const p = (step) => trainingDistribution(step).find((d) => d.id === 'paris').p;
   const steps = [0, 25, 50, 75, 100].map(p);
   for (let i = 1; i < steps.length; i++) assert.ok(steps[i] > steps[i - 1]);
 

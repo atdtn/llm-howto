@@ -4,7 +4,6 @@
 (function () {
   window.Demos = window.Demos || {};
 
-  const PROMPT = 'дед';
   const SEED = 20261126;
   const TOP = 5;
 
@@ -19,13 +18,9 @@
     };
   }
 
-  function fmt(value) {
-    return value.toFixed(1).replace('.', ',');
-  }
-
   /** Полоски вероятностей для выбранной температуры. */
-  function renderBars(container, model, temperature) {
-    const { items } = window.LLM.predictNext(model, PROMPT);
+  function renderBars(container, model, prompt, temperature) {
+    const { items } = window.LLM.predictNext(model, prompt);
     const dist = window.LLM.applyTemperature(items, temperature).slice(0, TOP);
     const best = dist.length ? dist[0].p : 1;
 
@@ -53,6 +48,8 @@
 
   window.Demos.temperature = {
     init(model) {
+      const { t, num } = window.LLM_I18N;
+      const PROMPT = t('temperature.prompt');
       const slider = document.getElementById('temp-slider');
       const label = document.getElementById('temp-value');
       const host = document.getElementById('temp-columns');
@@ -62,10 +59,14 @@
 
       const render = () => {
         const value = Number(slider.value);
-        label.textContent = fmt(value);
+        label.textContent = num(value, 1);
 
         const temps = [0.2, value, 1.8];
-        const titles = ['Температура 0,2', 'Выбранная: ' + fmt(value), 'Температура 1,8'];
+        const titles = [
+          t('temperature.cold', { value: num(0.2, 1) }),
+          t('temperature.selected', { value: num(value, 1) }),
+          t('temperature.hot', { value: num(1.8, 1) }),
+        ];
 
         host.textContent = '';
 
@@ -79,7 +80,7 @@
 
           const bars = document.createElement('div');
           bars.className = 'temp-bars';
-          renderBars(bars, model, temperature);
+          renderBars(bars, model, PROMPT, temperature);
 
           const sample = document.createElement('p');
           sample.className = 'temp-sample';
@@ -88,7 +89,7 @@
             maxTokens: 4,
             rng: mulberry32(SEED),
           });
-          sample.textContent = 'пример: ' + result.tokens.join(' ');
+          sample.textContent = t('temperature.sample', { tokens: result.tokens.join(' ') });
 
           panel.append(title, bars, sample);
           host.appendChild(panel);

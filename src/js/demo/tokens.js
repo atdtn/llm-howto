@@ -6,6 +6,7 @@
 
   window.Demos.tokens = {
     init() {
+      const { t } = window.LLM_I18N;
       const input = document.getElementById('tokens-input');
       const out = document.getElementById('tokens-out');
       const note = document.getElementById('tokens-note');
@@ -32,8 +33,8 @@
         });
 
         note.textContent = chunks.length
-          ? 'Всего токенов: ' + chunks.length + '. Номера здесь условные, а правила нарезки упрощены: настоящая модель подбирает кусочки сама, обучаясь на текстах.'
-          : 'Введи текст, чтобы увидеть токены.';
+          ? t('tokens.count', { count: chunks.length })
+          : t('tokens.empty');
       };
 
       input.addEventListener('input', render);

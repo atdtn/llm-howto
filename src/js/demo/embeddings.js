@@ -4,12 +4,9 @@
 (function () {
   window.Demos = window.Demos || {};
 
-  function fmt(x) {
-    return x.toFixed(2).replace('.', ',');
-  }
-
   window.Demos.embeddings = {
     init() {
+      const { t, num, locale } = window.LLM_I18N;
       const plot = document.getElementById('embedding-plot');
       const wordEl = document.getElementById('embedding-word');
       const vectorEl = document.getElementById('embedding-vector');
@@ -17,7 +14,8 @@
       if (!plot || !wordEl || !vectorEl || !nearEl) return;
 
       const Emb = window.LLMEmbeddings;
-      const words = Emb.EMBEDDING_WORDS;
+      const labels = locale.data.embeddingLabels;
+      const words = Emb.EMBEDDING_WORDS.map((w) => ({ ...w, word: labels[w.id] || w.id }));
       let selectedId = 'koshka';
 
       const buttons = new Map();
@@ -29,7 +27,7 @@
         button.style.left = word.vector[0] * 100 + '%';
         button.style.top = (1 - word.vector[1]) * 100 + '%';
         button.setAttribute('aria-pressed', 'false');
-        button.setAttribute('aria-label', 'Слово «' + word.word + '»');
+        button.setAttribute('aria-label', t('embeddings.aria', { word: word.word }));
 
         const dot = document.createElement('span');
         dot.className = 'emb-dot';
@@ -57,17 +55,17 @@
         });
 
         wordEl.textContent = selected.word;
-        vectorEl.textContent = '[' + selected.vector.map(fmt).join('; ') + ']';
+        vectorEl.textContent = '[' + selected.vector.map((x) => num(x, 2)).join('; ') + ']';
 
         const near = Emb.nearestWords(words, selectedId);
         nearEl.textContent = '';
         near.forEach((item) => {
           const li = document.createElement('li');
           const name = document.createElement('span');
-          name.textContent = item.word;
+          name.textContent = labels[item.id] || item.id;
           const distance = document.createElement('span');
           distance.className = 'emb-distance';
-          distance.textContent = fmt(item.distance);
+          distance.textContent = num(item.distance, 2);
           li.append(name, distance);
           nearEl.appendChild(li);
         });
