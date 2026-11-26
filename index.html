@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Как работают языковые модели — наглядно</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <p class="kicker">Объяснялка без формул</p>
+      <h1>Как работают<br>языковые модели</h1>
+      <p class="lead">Чат-боты, переводчики, автодополнение в телефоне — всё это языковые модели. Здесь можно потрогать руками главную идею, на которой они держатся.</p>
+      <p class="hero-callout">Главная идея: модель — это машина, которая угадывает следующее слово. Всё остальное — детали этого угадывания.</p>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="Разделы">
+    <div class="wrap">
+      <a href="#predict">01 Угадай слово</a>
+      <a href="#tokens">02 Токены</a>
+      <a href="#context">03 Контекст</a>
+      <a href="#attention">04 Внимание</a>
+      <a href="#generate">05 Токен за токеном</a>
+      <a href="#temperature">06 Температура</a>
+      <a href="#learn">07 Обучение</a>
+      <a href="#inside">08 Устройство</a>
+      <a href="#finale">09 Итог</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+
+    <section id="predict">
+      <p class="num">01</p>
+      <h2>Модель угадывает следующее слово</h2>
+      <p>Языковая модель — это программа, которая читает текст и предсказывает, какое слово будет следующим. Когда телефон предлагает тебе очередное слово, ты уже видел такую модель в работе. Большая модель делает то же самое, но она прочитала столько текста, что угадывает гораздо лучше.</p>
+      <p>Попробуй: начни фразу — ниже появятся слова, которые модель считает вероятными. Полоски показывают вероятность: чем длиннее, тем увереннее модель.</p>
+
+      <div class="demo" id="demo-predict">
+        <label class="field-label" for="predict-input">Начни фразу</label>
+        <input id="predict-input" class="text-input" value="колобок" autocomplete="off" spellcheck="false">
+        <div class="predict-out" id="predict-out" aria-live="polite"></div>
+        <p class="demo-note" id="predict-note"></p>
+      </div>
+
+      <p class="bridge">Но сначала текст нужно превратить в числа — этим займёмся дальше.</p>
+    </section>
+
+    <section id="tokens">
+      <p class="num">02</p>
+      <h2>Модель видит не слова, а токены</h2>
+      <p>Модель не видит слова целиком и тем более не видит буквы. Перед работой текст режут на кусочки — токены. Часто токен совпадает со словом, но бывает и частью слова, и знаком препинания.</p>
+      <p>У каждой части есть номер. Модель работает с числами: строка текста превращается в последовательность чисел, и только потом начинается угадывание.</p>
+
+      <div class="demo">
+        <label class="field-label" for="tokens-input">Текст</label>
+        <textarea id="tokens-input" class="text-input" rows="2" spellcheck="false">Привет, мир! Языковые модели читают текст по кусочкам.</textarea>
+        <div class="token-chips" id="tokens-out"></div>
+        <p class="demo-note" id="tokens-note"></p>
+      </div>
+
+      <p class="bridge">Сами по себе номера ещё не хранят смысл: он появляется рядом с другими словами.</p>
+    </section>
+
+    <section id="context">
+      <p class="num">03</p>
+      <h2>Смысл берётся из контекста</h2>
+      <p>Одно и то же слово может значить разное. Модель понимает, что имеется в виду, по соседним словам.</p>
+      <p>Слово «ключ» рядом с дверью и замком — это железка, которая открывает дверь. А рядом со скрипкой и нотами — знак в начале нотной строки. Для модели это два разных смысла, и различие берётся из контекста.</p>
+
+      <div class="demo">
+        <div class="context-switch" role="tablist" aria-label="Контекст слова «ключ»">
+          <button class="context-tab is-active" data-context="door" role="tab" aria-selected="true">ключ от двери</button>
+          <button class="context-tab" data-context="music" role="tab" aria-selected="false">скрипичный ключ</button>
+        </div>
+        <p class="context-sentence" id="context-sentence"></p>
+        <p class="field-label">Слова, которые модель считает близкими:</p>
+        <div class="neighbor-chips" id="context-out"></div>
+        <p class="demo-note">Это иллюстрация. Настоящая модель хранит смыслы слов как наборы чисел и находит близких соседей сама.</p>
+      </div>
+
+      <h3 class="subhead">Как смысл хранится в числах</h3>
+      <p>Каждое слово модель заменяет набором чисел — вектором. Слова с похожим смыслом получают близкие векторы. Поэтому «кошка» оказывается рядом с «котом», а «яблоко» — рядом с «грушей».</p>
+
+      <div class="demo">
+        <div class="embedding-layout">
+          <div class="embedding-plot" id="embedding-plot" role="group" aria-label="Условная карта слов"></div>
+          <div class="embedding-info">
+            <p class="field-label">Выбрано: <strong id="embedding-word"></strong></p>
+            <p class="embedding-vector" id="embedding-vector"></p>
+            <p class="field-label">Ближайшие слова:</p>
+            <ul class="embedding-near" id="embedding-near"></ul>
+          </div>
+        </div>
+        <p class="demo-note">Это условная плоскость из двух чисел. У настоящей модели у слова сотни или тысячи чисел, и контекст продолжает менять его представление.</p>
+      </div>
+
+      <p class="bridge">Набор чисел — только начало: теперь модели нужно связать слова между собой.</p>
+    </section>
+
+    <section id="attention">
+      <p class="num">04</p>
+      <h2>Внимание связывает слова между собой</h2>
+      <p>Чтобы понять фразу, модели нужно связать слова друг с другом. Этот механизм называется вниманием: каждое слово «смотрит» на другие и решает, какие из них важнее для его смысла.</p>
+      <p>Наведи курсор на слово, коснись его на телефоне или выбери клавишей Tab — подсветятся слова, на которые оно обращает внимание. Картинка упрощена: у настоящей модели такие связи вычисляются сами, и их миллионы.</p>
+
+      <div class="demo">
+        <div class="attention-sentence" id="attention-sentence"></div>
+        <p class="demo-note" id="attention-caption" aria-live="polite">Наведи курсор, коснись слова или выбери его клавишей Tab.</p>
+      </div>
+
+      <p class="bridge">Когда слова связаны, можно снова выбрать следующий токен — и повторить.</p>
+    </section>
+
+    <section id="generate">
+      <p class="num">05</p>
+      <h2>Один токен за другим</h2>
+      <p>Модель не пишет весь ответ сразу. Она делает один маленький шаг — выбирает следующее слово — и добавляет его к тексту. Потом смотрит на всё написанное заново и делает следующий шаг.</p>
+      <p>Нажми «Сгенерировать» и посмотри, как из отдельных угадываний складывается фраза. Или выбери слово сам: нажми на вариант, и модель продолжит уже с него.</p>
+
+      <div class="demo">
+        <div class="generate-controls">
+          <input id="generate-input" class="text-input" value="жили-были" spellcheck="false" aria-label="Начало текста">
+          <button class="btn" id="generate-start">Сгенерировать</button>
+          <button class="btn btn-ghost" id="generate-more">Ещё 10</button>
+          <button class="btn btn-ghost" id="generate-pause" disabled>Пауза</button>
+          <button class="btn btn-ghost" id="generate-reset">Сброс</button>
+        </div>
+        <div class="generate-body">
+          <div class="generate-text" id="generate-output" aria-live="polite"></div>
+          <div class="generate-candidates" id="generate-candidates"></div>
+        </div>
+        <p class="demo-note">«Ещё 10» добавляет ровно десять слов: игрушечная модель не знает пунктуации и не умеет остановиться на точке. Настоящая — умеет.</p>
+      </div>
+
+      <p class="bridge">Из одних и тех же кандидатов можно выбирать осторожнее или смелее.</p>
+    </section>
+
+    <section id="temperature">
+      <p class="num">06</p>
+      <h2>Температура: аккуратно или смело</h2>
+      <p>У модели всегда есть выбор: взять самое вероятное слово или рискнуть и взять менее очевидное. Насколько сильно она рискует, задаёт температура.</p>
+      <p>Низкая температура — предсказуемо и осторожно. Высокая — смелее и неожиданнее, но иногда странно. Подвигай ползунок: он меняет среднюю колонку.</p>
+
+      <div class="demo">
+        <label class="field-label" for="temp-slider">Температура: <span id="temp-value">1,0</span></label>
+        <input type="range" id="temp-slider" min="0" max="2" step="0.1" value="1">
+        <div class="temp-columns" id="temp-columns"></div>
+        <p class="demo-note">Одинаковый старт — разные распределения. Слева модель почти не рискует, справа рассматривает редкие варианты. Длина полоски — вероятность слова.</p>
+      </div>
+
+      <p class="bridge">Но откуда берутся сами вероятности? Их подстраивают во время обучения.</p>
+    </section>
+
+    <section id="learn">
+      <p class="num">07</p>
+      <h2>Как модель учится</h2>
+      <p>Модель не получает готовых правил. Никто не вписывает в неё «столица Франции — Париж». Во время обучения она подстраивает свои числа так, чтобы правильные продолжения становились вероятнее, а неправильные — реже.</p>
+      <p>Ниже пять воображаемых ответов. В начале обучения модель почти не отличает правильный от остальных. Подвигай «шаги обучения» и посмотри, как вероятность Парижа растёт.</p>
+
+      <div class="demo">
+        <label class="field-label" for="learn-slider">Шаги обучения: <output id="learn-step">0</output></label>
+        <input type="range" id="learn-slider" min="0" max="100" step="1" value="0">
+        <div class="learn-list" id="learn-out" aria-live="polite"></div>
+        <p class="demo-note">Цифры условные: это не запись настоящего обучения, а иллюстрация того, как подстройка чисел меняет вероятности. У настоящей модели миллиарды параметров, и каждый шаг двигает их все.</p>
+      </div>
+
+      <p class="bridge">Что именно подстраивается при обучении? Посмотрим на устройство модели целиком.</p>
+    </section>
+
+    <section id="inside">
+      <p class="num">08</p>
+      <h2>Что у неё внутри</h2>
+      <p>Внутри модель — это длинная цепочка похожих блоков. Всё, что она «знает», хранится в числах — параметрах. Нажми на этап, чтобы увидеть, что там происходит.</p>
+
+      <div class="demo">
+        <div class="architecture-stages" id="inside-stages" role="group" aria-label="Этапы работы модели"></div>
+        <div class="stage-description" id="inside-description" aria-live="polite"></div>
+      </div>
+
+      <p>Размер модели определяют два числа: сколько в ней слоёв и какая ширина у векторов. Подвигай ползунки — оценки пересчитаются.</p>
+
+      <div class="demo">
+        <div class="params-presets" role="group" aria-label="Размер модели">
+          <button class="context-tab" data-preset="small" aria-pressed="false">Маленькая</button>
+          <button class="context-tab is-active" data-preset="medium" aria-pressed="true">Средняя</button>
+          <button class="context-tab" data-preset="large" aria-pressed="false">Большая</button>
+        </div>
+
+        <label class="field-label" for="params-layers">Слоёв: <output id="params-layers-value">32</output></label>
+        <input type="range" id="params-layers" min="4" max="96" step="1" value="32">
+
+        <label class="field-label" for="params-width">Ширина вектора: <output id="params-width-value">4096</output></label>
+        <input type="range" id="params-width" min="512" max="8192" step="256" value="4096">
+
+        <div class="params-results">
+          <p>Параметров: <strong id="params-count"></strong></p>
+          <p>Размер файла: <strong id="params-size"></strong></p>
+        </div>
+
+        <details class="formula">
+          <summary>Откуда цифры</summary>
+          <p>Оценка: 12 · L · d² параметров в блоках плюс 2 · V · d в эмбеддингах и выходном слое, где L — слои, d — ширина, V — словарь (здесь 50 000). Размер файла — по 2 байта на параметр (fp16).</p>
+          <p>Это упрощение: в реальных моделях есть дополнительные компоненты, а работающая модель занимает памяти больше, чем её файл весов.</p>
+        </details>
+
+        <p class="demo-note">Оценка приблизительная. Гигабайты десятичные, как на упаковке диска.</p>
+      </div>
+
+      <p class="bridge">Теперь соберём всё в одну картинку — и вспомним главное ограничение.</p>
+    </section>
+
+    <section id="finale">
+      <p class="num">09</p>
+      <h2>И это всё?</h2>
+      <p>В целом — да. Большая модель отличается от нашей игрушки масштабом: она прочитала почти весь интернет и научилась замечать тонкие связи между словами. Но принцип тот же: предсказать следующее слово, добавить его, повторить.</p>
+      <p>Почему она иногда ошибается? Потому что угадывает правдоподобное, а не проверяет истину. Убедительно звучащая неправда — прямое следствие её устройства, а не сбой.</p>
+      <div class="recap">
+        <p class="recap-title">Что запомнить</p>
+        <ul>
+          <li>Модель предсказывает следующее слово по вероятностям.</li>
+          <li>Текст режется на токены, и модель работает с их номерами.</li>
+          <li>Смысл слова зависит от контекста, а внимание связывает слова между собой.</li>
+          <li>Ответ собирается по одному токену за шаг.</li>
+          <li>Температура решает, насколько модель рискует при выборе.</li>
+          <li>Вероятности не заданы изначально: их подстраивает обучение.</li>
+          <li>Знания модели — это числа-параметры; слои и ширина задают её масштаб.</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>Демо 01, 05 и 06 считают частоты слов по небольшому встроенному тексту: это игрушечная модель, а не нейросеть. Обучение, карта слов и расчёт размера — отдельные условные иллюстрации, числа в них подобраны для наглядности. Всё работает офлайн, без интернета.</p>
+    </div>
+  </footer>
+
+  <script src="js/corpus.js"></script>
+  <script src="js/model.js"></script>
+  <script src="js/learn.js"></script>
+  <script src="js/params.js"></script>
+  <script src="js/embeddings.js"></script>
+  <script src="js/generation.js"></script>
+  <script src="js/demo/predict.js"></script>
+  <script src="js/demo/tokens.js"></script>
+  <script src="js/demo/context.js"></script>
+  <script src="js/demo/embeddings.js"></script>
+  <script src="js/demo/attention.js"></script>
+  <script src="js/demo/generate.js"></script>
+  <script src="js/demo/temperature.js"></script>
+  <script src="js/demo/learn.js"></script>
+  <script src="js/demo/inside.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
