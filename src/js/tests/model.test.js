@@ -148,3 +148,56 @@ test('tokenize: буквы с умлаутами, ß и ё считаются ч
   assert.deepStrictEqual(tokenize('Schlüssel, Größe! Ёж'), ['schlüssel', 'größe', 'ёж']);
   assert.deepStrictEqual(tokenizeForDisplay('Straße!'), ['Straße', '!']);
 });
+
+const LLM = require("../model.js");
+
+/* ---------- Демо на настоящих словарях: стартовые фразы не должны давать «один вариант». ---------- */
+
+const fs = require('fs');
+const path = require('path');
+const DEMO_LOCALES = ['en', 'ru', 'de'].map((code) => {
+  const locale = require(`../i18n/${code}.js`);
+  return { code, text: locale.text, model: LLM.buildModel(LLM.tokenize(locale.corpus)) };
+});
+
+test('демо 01: стартовая фраза даёт не меньше трёх вариантов в каждом языке', () => {
+  for (const { code, text, model } of DEMO_LOCALES) {
+    const { items } = LLM.predictNext(model, text['predict.defaultInput']);
+    assert.ok(items.length >= 3, `${code}: «${text['predict.defaultInput']}» → ${items.length}`);
+  }
+});
+
+test('демо 05: на первом шаге генерации есть из чего выбрать', () => {
+  for (const { code, text, model } of DEMO_LOCALES) {
+    const { items } = LLM.predictNext(model, text['generate.defaultInput']);
+    assert.ok(items.length >= 2, `${code}: «${text['generate.defaultInput']}» → ${items.length}`);
+  }
+});
+
+test('демо 06: примеры трёх колонок температуры различаются при любом положении ползунка', () => {
+  const source = fs.readFileSync(path.join(__dirname, '..', 'demo', 'temperature.js'), 'utf8');
+  const seed = Number(source.match(/const SEED = (\d+);/)[1]);
+  const sample = (model, prompt, temperature, column) =>
+    LLM.generate(model, prompt, { temperature, maxTokens: 4, rng: LLM.mulberry32(seed + column) }).tokens.join(' ');
+  for (const { code, text, model } of DEMO_LOCALES) {
+    const prompt = text['temperature.prompt'];
+    const cold = sample(model, prompt, 0.2, 0);
+    const hot = sample(model, prompt, 1.8, 2);
+    assert.notStrictEqual(cold, hot, `${code}: 0,2 и 1,8`);
+    for (let step = 5; step <= 15; step++) {
+      const middle = sample(model, prompt, step / 10, 1);
+      assert.notStrictEqual(middle, hot, `${code}: ${step / 10} и 1,8`);
+      assert.notStrictEqual(middle, cold, `${code}: ${step / 10} и 0,2`);
+    }
+  }
+});
+
+test('mulberry32: одинаковое зерно — одинаковый ряд, числа в [0, 1)', () => {
+  const a = LLM.mulberry32(42);
+  const b = LLM.mulberry32(42);
+  for (let i = 0; i < 5; i++) {
+    const x = a();
+    assert.strictEqual(x, b());
+    assert.ok(x >= 0 && x < 1);
+  }
+});

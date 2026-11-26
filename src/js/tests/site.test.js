@@ -196,3 +196,19 @@ test('стили: плавная прокрутка не включена с с�
   const nav = fs.readFileSync(path.join(__dirname, '..', 'nav.js'), 'utf8');
   assert.ok(nav.includes("classList.add('smooth-scroll')"), 'nav.js включает плавную прокрутку после загрузки');
 });
+
+test('страницы: доступность разметки (skip-link, <main>, <output> вне <label>, имя кнопок)', () => {
+  const pages = { en: '', ru: 'ru/', de: 'de/' };
+  for (const code of LANGS) {
+    const html = read(path.join(pages[code], 'index.html'));
+    assert.match(html, /<body id="top">\s*<a class="skip-link" href="#main">/, `${code}: ссылка «К содержанию» первой`);
+    const main = html.slice(html.indexOf('<main id="main"'), html.indexOf('</main>'));
+    assert.ok(main.includes('<h1'), `${code}: заголовок h1 внутри <main>`);
+    assert.ok(!/<label[^>]*>(?:(?!<\/label>)[\s\S])*<output/.test(html), `${code}: <output> внутри <label>`);
+    assert.strictEqual((html.match(/<output id="[^"]+" for="[^"]+">/g) || []).length, 3, `${code}: у <output> есть for`);
+    assert.ok(!/id="toc-toggle"[^>]*aria-label=/.test(html), `${code}: имя кнопки меню — её видимый текст`);
+    assert.ok(html.includes(`<span class="lang-code">${code.toUpperCase()}</span>`), `${code}: видимый код языка в имени`);
+    assert.ok(!/class="icon-btn lang-summary"[^>]*aria-label=/.test(html), `${code}: у меню языков нет aria-label поверх текста`);
+    assert.ok(html.includes('<noscript>'), `${code}: пояснение без JavaScript`);
+  }
+});

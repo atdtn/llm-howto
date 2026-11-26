@@ -136,9 +136,9 @@ function languageSwitcher(code, t) {
   const label = escapeHtml(t('lang.label'));
   return [
     `<details class="lang-menu">`,
-    `<summary class="icon-btn lang-summary" aria-label="${label}: ${NAMES[code]}">`,
+    `<summary class="icon-btn lang-summary">`,
     `<svg class="globe" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>`,
-    `<span class="lang-code">${code.toUpperCase()}</span>`,
+    `<span class="visually-hidden">${label}: </span><span class="lang-code">${code.toUpperCase()}</span><span class="visually-hidden"> (${NAMES[code]})</span>`,
     `</summary>`,
     `<nav class="lang-switch" aria-label="${label}">${links.join('')}</nav>`,
     `</details>`,

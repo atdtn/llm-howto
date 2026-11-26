@@ -126,6 +126,12 @@
 
     toggle.addEventListener('click', () => setOpen(!isOpen()));
 
+    /* Фокус ушёл из панели клавишей Tab — закрываем. */
+    panel.addEventListener('focusout', (event) => {
+      const to = event.relatedTarget;
+      if (isOpen() && to && !panel.contains(to) && !toggle.contains(to)) setOpen(false);
+    });
+
     doc.addEventListener('click', (event) => {
       if (isOpen() && !panel.contains(event.target) && !toggle.contains(event.target)) setOpen(false);
     });

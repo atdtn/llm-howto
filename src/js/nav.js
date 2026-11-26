@@ -70,6 +70,18 @@
 
     toggle.addEventListener('click', () => setOpen(!isOpen()));
 
+    /* Фокус ушёл из панели клавишей Tab — панель закрывается, чтобы не висеть поверх текста. */
+    const leftTo = (event, ...inside) =>
+      event.relatedTarget && !inside.some((el) => el && el.contains(event.relatedTarget));
+    toc.addEventListener('focusout', (event) => {
+      if (isOpen() && leftTo(event, toc, toggle)) setOpen(false);
+    });
+    if (langMenu) {
+      langMenu.addEventListener('focusout', (event) => {
+        if (langMenu.open && leftTo(event, langMenu)) langMenu.open = false;
+      });
+    }
+
     links.forEach((link) => link.addEventListener('click', () => setOpen(false)));
 
     doc.addEventListener('click', (event) => {

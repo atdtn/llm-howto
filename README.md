@@ -91,7 +91,7 @@ and visit <http://localhost:8000>. Serving over HTTP matters: the language switc
 
 ### Tests
 
-The core logic (tokenizer, n-gram model, temperature, generation, learning illustration, size estimate), the translations and the built pages (canonical, hreflang, sitemap) have unit tests built on Node's built-in test runner. Node 18 or newer is required.
+The core logic (tokenizer, n-gram model, temperature, generation, learning illustration, size estimate), the translations and the built pages (canonical, hreflang, sitemap) have unit tests built on Node's built-in test runner. Node 22 or newer is required (CI uses Node 24).
 
 ```bash
 node --test src/js/tests/*.test.js
@@ -128,6 +128,12 @@ scripts/render-images.js  Redraws images and icons (needs playwright-core, see t
 design/                 Palette and logo options (not deployed)
 .github/workflows/      GitHub Pages deployment (tests, build, deploy)
 ```
+
+## License
+
+- **Code** (scripts/, src/js/, markup and styles, CI): [MIT](LICENSE).
+- **Texts, illustrations and logo** (the explainer and demo texts in `src/js/i18n/*.js`, the READMEs, `src/logo.svg`, icons, `src/og/`, `design/`): [CC BY 4.0](LICENSE-CONTENT). You may reuse and adapt them, including commercially, with credit: “How Language Models Work — Visually” by atdtn, https://github.com/atdtn/llm-howto, CC BY 4.0.
+- **Onest font** in `src/fonts/`: [SIL Open Font License 1.1](src/fonts/OFL.txt).
 
 ## Contributing
 

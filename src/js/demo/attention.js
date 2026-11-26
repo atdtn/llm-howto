@@ -8,7 +8,10 @@
    * Упрощённая карта внимания: строка — слово, которое «смотрит»,
    * столбец — слово, на которое смотрят. Веса от 0 до 1.
    * У настоящей модели такие веса вычисляются сами.
-   * Слова берутся из языкового словаря; порядок в нём должен совпадать с матрицей.
+   * Строки и столбцы — смысловые роли английской фразы: кот, который, сидел, на,
+   * подоконнике, уронил, цветок. Слова берутся из языкового словаря; если порядок слов
+   * в языке другой, attentionSlots говорит, какой роли соответствует каждое слово
+   * (в немецком придаточное кончается глаголом, а «um» — часть глагола «umstoßen»).
    */
   const WEIGHTS = [
     [1.0, 0.6, 0.1, 0.2, 0.1, 0.3, 0.2],
@@ -30,6 +33,10 @@
       const WORDS = locale.data.attentionWords;
       const NAMES = locale.data.attentionNames;
       const COMMA_AFTER = locale.data.attentionCommaAfter;
+      const SLOTS = locale.data.attentionSlots || WORDS.map((_, i) => i);
+
+      /* Вес между словами i и j; два слова одной роли (части одного глагола) связаны сильно. */
+      const weight = (i, j) => (SLOTS[i] === SLOTS[j] ? 0.9 : WEIGHTS[SLOTS[i]][SLOTS[j]]);
       const DEFAULT_CAPTION = t('attention.caption');
 
       const spans = [];
@@ -68,7 +75,7 @@
         clear();
         spans[index].classList.add('is-target');
 
-        const row = WEIGHTS[index];
+        const row = WORDS.map((_, j) => weight(index, j));
         row.forEach((weight, j) => {
           if (j === index) return;
           if (weight < 0.15) return;

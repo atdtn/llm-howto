@@ -4,19 +4,13 @@
 (function () {
   window.Demos = window.Demos || {};
 
-  const SEED = 20261126;
+  /*
+   * Зерно случайности; у каждой колонки своё (SEED + номер колонки), иначе при 1,0 и 1,8
+   * выбор часто совпадал и примеры были одинаковыми. Зерно подобрано так, что тексты
+   * трёх колонок различаются во всех языках (проверяет js/tests/model.test.js).
+   */
+  const SEED = 20261127;
   const TOP = 5;
-
-  function mulberry32(seed) {
-    let a = seed >>> 0;
-    return function () {
-      a = (a + 0x6d2b79f5) >>> 0;
-      let t = a;
-      t = Math.imul(t ^ (t >>> 15), t | 1);
-      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-  }
 
   /** Полоски вероятностей для выбранной температуры. */
   function renderBars(container, model, prompt, temperature) {
@@ -87,7 +81,7 @@
           const result = window.LLM.generate(model, PROMPT, {
             temperature,
             maxTokens: 4,
-            rng: mulberry32(SEED),
+            rng: window.LLM.mulberry32(SEED + i),
           });
           sample.textContent = t('temperature.sample', { tokens: result.tokens.join(' ') });
 

@@ -66,10 +66,7 @@
       const candidateRow = (item, clickable) => {
         const isChosen = item.token === pending.token;
         const row = document.createElement(clickable ? 'button' : 'div');
-        if (clickable) {
-          row.type = 'button';
-          row.setAttribute('aria-label', t('generate.pickAria', { word: item.token }));
-        }
+        if (clickable) row.type = 'button';
         row.className =
           'cand-row' + (clickable ? ' is-clickable' : '') + (isChosen ? ' is-chosen' : '');
 
@@ -77,6 +74,13 @@
         token.textContent = item.token;
         const pct = document.createElement('span');
         pct.textContent = (item.p * 100).toFixed(0) + '%';
+        if (clickable) {
+          /* Подсказка для экранных чтецов; видимый текст входит в имя кнопки целиком. */
+          const hint = document.createElement('span');
+          hint.className = 'visually-hidden';
+          hint.textContent = t('generate.pickPrefix') + ' ';
+          row.append(hint);
+        }
         row.append(token, pct);
 
         if (clickable) row.addEventListener('click', () => choose(item.token));

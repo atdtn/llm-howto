@@ -31,7 +31,8 @@
       'og.alt': 'How language models work: an interactive explainer without formulas',
       'brand.name': 'How LLMs work',
       'brand.home': 'How LLMs work — back to top',
-      'toc.menu': 'Section list',
+      'a11y.skip': 'Skip to content',
+      'noscript.text': 'The interactive demos need JavaScript. The text of the explainer works without it.',
       'lang.label': 'Language',
 
       'hero.kicker': 'An explainer without formulas',
@@ -58,7 +59,7 @@
       'predict.p2':
         'Try it: start a phrase, and the model will show the words it considers likely. The bars show probability: the longer the bar, the more confident the model is.',
       'predict.inputLabel': 'Start a phrase',
-      'predict.defaultInput': 'the gingerbread',
+      'predict.defaultInput': 'in the',
       'predict.bridge': "But first the text has to be turned into numbers. We'll get to that next.",
       'predict.empty': 'Start typing — likely continuations will appear.',
       'predict.emptyInput': 'Nothing typed yet — these are the most common words in the built-in text.',
@@ -122,7 +123,7 @@
       'generate.p2':
         'Press “Generate” and watch how separate guesses add up to a sentence. Or pick the word yourself: click one of the options, and the model continues from it.',
       'generate.inputLabel': 'Beginning of the text',
-      'generate.defaultInput': 'once upon a',
+      'generate.defaultInput': 'the cat',
       'generate.start': 'Generate',
       'generate.more': '10 more',
       'generate.pause': 'Pause',
@@ -134,7 +135,7 @@
       'generate.pickPrompt': 'Click a word to continue on your own:',
       'generate.noNext': 'The model has nothing to add.',
       'generate.enough': 'That is enough: press “Reset” and start again.',
-      'generate.pickAria': 'Pick the word “{word}”',
+      'generate.pickPrefix': 'Pick the word',
       'generate.bridge': 'The same candidates can be picked more cautiously or more boldly.',
 
       'temperature.title': 'Temperature: cautious or bold',

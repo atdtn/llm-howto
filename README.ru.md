@@ -91,7 +91,7 @@ python3 -m http.server 8000 -d dist
 
 ### Тесты
 
-Логика ядра (токенизатор, модель на n-граммах, температура, генерация, иллюстрация обучения, оценка размера), переводы и собранные страницы (canonical, hreflang, sitemap) покрыты юнит-тестами на встроенном тестовом раннере Node. Нужна Node 18 или новее.
+Логика ядра (токенизатор, модель на n-граммах, температура, генерация, иллюстрация обучения, оценка размера), переводы и собранные страницы (canonical, hreflang, sitemap) покрыты юнит-тестами на встроенном тестовом раннере Node. Нужна Node 22 или новее (в CI — Node 24).
 
 ```bash
 node --test src/js/tests/*.test.js
@@ -128,6 +128,12 @@ scripts/render-images.js  Перерисовка картинок и значк�
 design/                 Варианты палитр и логотипов (на сайт не попадает)
 .github/workflows/      Публикация на GitHub Pages (тесты, сборка, деплой)
 ```
+
+## Лицензия
+
+- **Код** (scripts/, src/js/, разметка и стили, CI): [MIT](LICENSE).
+- **Тексты, иллюстрации и логотип** (тексты объяснялки и демо в `src/js/i18n/*.js`, README, `src/logo.svg`, значки, `src/og/`, `design/`): [CC BY 4.0](LICENSE-CONTENT). Их можно использовать и переделывать, в том числе в коммерческих целях, с указанием автора: «How Language Models Work — Visually», atdtn, https://github.com/atdtn/llm-howto, CC BY 4.0.
+- **Шрифт Onest** в `src/fonts/`: [SIL Open Font License 1.1](src/fonts/OFL.txt).
 
 ## Участие
 

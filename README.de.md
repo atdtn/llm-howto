@@ -91,7 +91,7 @@ und rufe <http://localhost:8000> auf. Wichtig ist HTTP: Der Umschalter verlinkt 
 
 ### Tests
 
-Die Kernlogik (Tokenizer, n-Gramm-Modell, Temperatur, Generierung, Lern-Veranschaulichung, Größenschätzung), die Übersetzungen und die gebauten Seiten (canonical, hreflang, Sitemap) sind mit Unit-Tests abgedeckt, die auf dem eingebauten Testrunner von Node laufen. Node 18 oder neuer ist nötig.
+Die Kernlogik (Tokenizer, n-Gramm-Modell, Temperatur, Generierung, Lern-Veranschaulichung, Größenschätzung), die Übersetzungen und die gebauten Seiten (canonical, hreflang, Sitemap) sind mit Unit-Tests abgedeckt, die auf dem eingebauten Testrunner von Node laufen. Node 22 oder neuer ist nötig (CI nutzt Node 24).
 
 ```bash
 node --test src/js/tests/*.test.js
@@ -128,6 +128,12 @@ scripts/render-images.js  Zeichnet Bilder und Icons neu (braucht playwright-core
 design/                 Varianten für Paletten und Logo (wird nicht veröffentlicht)
 .github/workflows/      Veröffentlichung auf GitHub Pages (Tests, Build, Deployment)
 ```
+
+## Lizenz
+
+- **Code** (scripts/, src/js/, Markup und Styles, CI): [MIT](LICENSE).
+- **Texte, Illustrationen und Logo** (Erklär- und Demotexte in `src/js/i18n/*.js`, die READMEs, `src/logo.svg`, Icons, `src/og/`, `design/`): [CC BY 4.0](LICENSE-CONTENT). Sie dürfen sie weiterverwenden und bearbeiten, auch kommerziell, mit Namensnennung: „How Language Models Work — Visually“ von atdtn, https://github.com/atdtn/llm-howto, CC BY 4.0.
+- **Schrift Onest** in `src/fonts/`: [SIL Open Font License 1.1](src/fonts/OFL.txt).
 
 ## Mitmachen
 

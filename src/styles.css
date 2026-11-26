@@ -730,15 +730,19 @@ html:not(.js) .settings { display: none; }
 
   /* Текст сдвигается вправо, чтобы колонка и текст стояли по центру вместе. */
   .hero .wrap,
-  main.wrap,
+  .content.wrap,
   .footer .wrap { margin-left: calc(50% - 400px + 120px); }
 }
 
-/* Телефоны: имя сайта прячем, кнопки поплотнее. */
+/* Имя сайта прячем, пока ему не хватает места рядом с кнопками (немецкое — самое длинное). */
+@media (max-width: 720px) {
+  .brand-name { display: none; }
+}
+
+/* Телефоны: кнопки поплотнее. */
 @media (max-width: 560px) {
   :root { --header-h: 56px; }
   .header-bar { gap: 8px; padding: 0 12px; }
-  .brand-name { display: none; }
   .toc-toggle { flex: 1 1 auto; max-width: none; }
   .lang-code { display: none; }
   .lang-summary { padding: 0; width: 38px; }
@@ -949,6 +953,7 @@ section > p {
 
 .context-switch {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 18px;
 }
@@ -1018,8 +1023,10 @@ section > p {
   margin-bottom: 6px;
 }
 
+/* Отрицательные поля гасят внутренние: подсветка широкая, а запятая стоит вплотную к слову. */
 .aw {
-  padding: 2px 5px;
+  margin: 0 -3px;
+  padding: 2px 3px;
   border-radius: 7px;
   cursor: default;
   transition: background 0.18s ease, color 0.18s ease;
@@ -1117,6 +1124,8 @@ section > p {
 
 .cand-row {
   display: flex;
+  align-items: center;
+  min-height: 28px; /* цель для пальца не меньше 24×24 (WCAG 2.2) */
   justify-content: space-between;
   gap: 10px;
   padding: 3px 8px;
@@ -1366,6 +1375,7 @@ section > p {
   white-space: nowrap;
   cursor: pointer;
   transform: translate(-7px, -50%);
+  min-height: 28px; /* цель для пальца не меньше 24×24 (WCAG 2.2) */
 }
 
 .embedding-point:hover { background: var(--accent-soft); }
@@ -1430,11 +1440,13 @@ section > p {
 
 .architecture-stages {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 4px;
 }
 
 .stage-button {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: baseline;
   gap: 12px;
@@ -1577,7 +1589,7 @@ button.cand-row {
 
 @media (max-width: 640px) {
   .embedding-layout { grid-template-columns: 1fr; }
-  .embedding-plot { height: 280px; }
+  .embedding-plot { height: 360px; } /* выше, чтобы соседние слова не перекрывали друг друга */
   .params-results { flex-direction: column; gap: 4px; }
 }
 
@@ -1624,4 +1636,51 @@ button.cand-row {
   .chevron,
   .site-header { transition: none !important; }
   .brand-mark .lg-cursor { animation: none; }
+}
+
+/* ---------- Доступность ---------- */
+
+/* Текст только для экранных чтецов. */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* «К содержанию»: видна только при переходе с клавиатуры. */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus { transform: none; outline: 2px solid var(--ink); outline-offset: 2px; }
+
+main:focus { outline: none; }
+
+.noscript {
+  margin: 0 0 8px;
+  padding: 14px 18px;
+  border: 1px dashed var(--accent);
+  border-radius: 12px;
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+@media (max-width: 400px) {
+  .stage-tag { white-space: normal; }
 }

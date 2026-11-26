@@ -31,7 +31,8 @@
       'og.alt': 'Wie Sprachmodelle funktionieren: eine interaktive Erklärung ohne Formeln',
       'brand.name': 'Wie LLMs funktionieren',
       'brand.home': 'Wie LLMs funktionieren — nach oben',
-      'toc.menu': 'Abschnittsliste',
+      'a11y.skip': 'Zum Inhalt',
+      'noscript.text': 'Die interaktiven Demos brauchen JavaScript. Der Text der Erklärung funktioniert auch ohne.',
       'lang.label': 'Sprache',
 
       'hero.kicker': 'Eine Erklärung ohne Formeln',
@@ -122,7 +123,7 @@
       'generate.p2':
         'Drück auf „Generieren“ und sieh zu, wie sich aus einzelnen Vermutungen ein Satz ergibt. Oder wähle das Wort selbst: Klick auf eine Option, und das Modell macht von dort weiter.',
       'generate.inputLabel': 'Anfang des Textes',
-      'generate.defaultInput': 'es war',
+      'generate.defaultInput': 'die Katze',
       'generate.start': 'Generieren',
       'generate.more': '10 weitere',
       'generate.pause': 'Pause',
@@ -134,7 +135,7 @@
       'generate.pickPrompt': 'Klick ein Wort, um selbst weiterzumachen:',
       'generate.noNext': 'Das Modell hat nichts mehr hinzuzufügen.',
       'generate.enough': 'Das reicht: Drück auf „Zurücksetzen“ und fang neu an.',
-      'generate.pickAria': 'Das Wort „{word}“ wählen',
+      'generate.pickPrefix': 'Wort wählen',
       'generate.bridge': 'Aus denselben Kandidaten lässt sich vorsichtiger oder mutiger wählen.',
 
       'temperature.title': 'Temperatur: vorsichtig oder mutig',
@@ -249,9 +250,12 @@
         apelsin: 'Orange',
         banan: 'Banane',
       },
-      attentionWords: ['Der Kater', 'der', 'saß', 'auf dem Fensterbrett', 'stieß', 'die Blume', 'um'],
-      attentionNames: ['der Kater', 'der', 'saß', 'auf dem Fensterbrett', 'stieß', 'die Blume', 'um'],
+      attentionWords: ['Der Kater', 'der', 'auf dem Fensterbrett', 'saß', 'stieß', 'die Blume', 'um'],
+      attentionNames: ['der Kater', 'der', 'auf dem Fensterbrett', 'saß', 'stieß', 'die Blume', 'um'],
       attentionCommaAfter: [0, 3],
+      /* Роль каждого слова в общей матрице внимания (js/demo/attention.js):
+         0 кот, 1 который, 2 сидел, 3 на, 4 подоконник, 5 уронил, 6 цветок. */
+      attentionSlots: [0, 1, 4, 2, 5, 6, 5],
       learnLabels: {
         paris: 'Paris',
         london: 'London',

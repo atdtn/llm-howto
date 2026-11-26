@@ -59,6 +59,10 @@ test('словари: данные для демо согласованы с я�
     assert.strictEqual(data.attentionWords.length, 7, `${code}: attentionWords должен быть из 7 слов`);
     assert.strictEqual(data.attentionNames.length, 7, `${code}: attentionNames должен быть из 7 слов`);
     data.attentionCommaAfter.forEach((i) => assert.ok(i >= 0 && i < 6));
+    if (data.attentionSlots) {
+      assert.strictEqual(data.attentionSlots.length, 7, `${code}: attentionSlots для каждого слова`);
+      data.attentionSlots.forEach((s) => assert.ok(Number.isInteger(s) && s >= 0 && s < 7, `${code}: роль 0–6`));
+    }
   }
 });
 
