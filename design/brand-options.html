@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Варианты оформления</title>
+<style>
+  /* Каждая палитра — набор тех же переменных, что в src/styles.css. */
+  .p-amber   { --bg:#fffdf7; --card:#fff; --ink:#2b2115; --ink-soft:#4d3f2c; --muted:#7a6a52; --line:#f1e4c4; --accent:#ff9f1c; --accent-ink:#b35a00; --accent-soft:#fff2cc; --warm:#ffd23f; --on-accent:#2b2115; }
+  .p-amber.dark { --bg:#1f1a12; --card:#2a2317; --ink:#fff6dc; --ink-soft:#f1e4bf; --muted:#b9a684; --line:#4a3d24; --accent:#ffb020; --accent-ink:#ffc54d; --accent-soft:#3d3014; --warm:#ffd23f; --on-accent:#2b1d05; }
+
+  .p-coral   { --bg:#faf7f2; --card:#fff; --ink:#1f1d2b; --ink-soft:#3d3a4f; --muted:#6f6a80; --line:#ebe4da; --accent:#ef5b3f; --accent-ink:#c2391f; --accent-soft:#fde6df; --warm:#1c8c8c; --on-accent:#fff; }
+  .p-coral.dark { --bg:#17161f; --card:#211f2c; --ink:#f4f1ea; --ink-soft:#d8d3e3; --muted:#9a94ad; --line:#353246; --accent:#ff7a5c; --accent-ink:#ff9c85; --accent-soft:#3a2420; --warm:#3cc4c4; --on-accent:#1a0d08; }
+
+  .p-indigo  { --bg:#f7f7fc; --card:#fff; --ink:#15163a; --ink-soft:#33355e; --muted:#6b6d92; --line:#e3e3f2; --accent:#5b5bd6; --accent-ink:#4343b8; --accent-soft:#ebebfd; --warm:#b6e34a; --on-accent:#fff; }
+  .p-indigo.dark { --bg:#0f1024; --card:#171933; --ink:#eef0ff; --ink-soft:#c9cbf0; --muted:#8b8db8; --line:#2b2d52; --accent:#8b8bff; --accent-ink:#a9a9ff; --accent-soft:#25275a; --warm:#c8f25c; --on-accent:#0f1024; }
+
+  .p-sage    { --bg:#f5f7f2; --card:#fff; --ink:#1c2a21; --ink-soft:#35483b; --muted:#66786b; --line:#dfe7da; --accent:#2f8f6b; --accent-ink:#1f7354; --accent-soft:#e1f1e8; --warm:#e7b53c; --on-accent:#fff; }
+  .p-sage.dark { --bg:#111a15; --card:#18241d; --ink:#ecf4ee; --ink-soft:#cddcd2; --muted:#8fa596; --line:#2a3a30; --accent:#4cc395; --accent-ink:#74d9b0; --accent-soft:#1d3a2d; --warm:#f2c552; --on-accent:#0b1a13; }
+
+  .p-paper   { --bg:#fbfaf6; --card:#fff; --ink:#141414; --ink-soft:#333; --muted:#6e6e6e; --line:#e7e4dc; --accent:#d6332b; --accent-ink:#b3241d; --accent-soft:#fbe4e2; --warm:#2b5fd9; --on-accent:#fff; }
+  .p-paper.dark { --bg:#121212; --card:#1c1c1c; --ink:#f2f0ea; --ink-soft:#d6d3cb; --muted:#9b9992; --line:#303030; --accent:#ff5a4f; --accent-ink:#ff8178; --accent-soft:#3a1d1b; --warm:#7aa2ff; --on-accent:#140504; }
+
+  * { box-sizing: border-box; }
+  body { margin:0; font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; background:#f3f3f1; color:#222; }
+  @media (prefers-color-scheme: dark) { body { background:#161616; color:#eee; } .intro p, .sub { color:#aaa !important; } }
+  .page { max-width:1180px; margin:0 auto; padding:32px 16px 64px; }
+  h1 { font:600 2rem/1.15 Georgia,serif; margin:0 0 8px; }
+  h2 { font:600 1.45rem/1.2 Georgia,serif; margin:48px 0 6px; }
+  .intro p, .sub { color:#555; margin:0 0 18px; max-width:46em; }
+
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(100%,520px),1fr)); gap:18px; }
+  .pal { border-radius:18px; overflow:hidden; box-shadow:0 8px 30px -12px rgba(0,0,0,.25); }
+  .pal-head { display:flex; justify-content:space-between; align-items:baseline; gap:8px; padding:14px 16px; background:var(--card); color:var(--ink); border-bottom:1px solid var(--line); }
+  .pal-head b { font-family:Georgia,serif; font-size:1.1rem; }
+  .pal-head span { font-size:.8rem; color:var(--muted); }
+  .modes { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); }
+  .mock { background:var(--bg); color:var(--ink); padding:14px; }
+  .mock-bar { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  .mock-bar svg { width:26px; height:26px; flex:none; }
+  .mock-bar i { flex:1; height:8px; border-radius:4px; background:var(--line); }
+  .mock-pill { font:600 .68rem/1 system-ui; padding:5px 8px; border-radius:99px; border:1px solid var(--accent); color:var(--accent-ink); background:var(--card); white-space:nowrap; }
+  .mock-k { font:600 .6rem/1 system-ui; letter-spacing:.12em; text-transform:uppercase; color:var(--accent-ink); }
+  .mock h3 { font:600 1.12rem/1.15 Georgia,serif; margin:6px 0 8px; }
+  .mock p { font-size:.74rem; color:var(--ink-soft); margin:0 0 10px; }
+  .mock-card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px; }
+  .row { display:grid; grid-template-columns:3.2rem 1fr 2rem; align-items:center; gap:6px; font:.66rem ui-monospace,monospace; color:var(--muted); margin:4px 0; }
+  .row span:first-child { color:var(--ink); }
+  .track { height:6px; border-radius:3px; background:var(--accent-soft); overflow:hidden; }
+  .track i { display:block; height:100%; border-radius:3px; background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 55%,var(--warm))); }
+  .btns { display:flex; gap:6px; margin-top:10px; }
+  .btn { font:600 .66rem/1 system-ui; padding:6px 9px; border-radius:7px; background:var(--accent); color:var(--on-accent); }
+  .btn.ghost { background:transparent; color:var(--ink-soft); border:1px solid var(--line); }
+  .swatches { display:flex; background:var(--card); }
+  .swatches div { flex:1; height:26px; }
+  .pal-note { background:var(--card); color:var(--ink-soft); font-size:.8rem; padding:10px 16px 14px; margin:0; }
+
+  .logos { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:18px; }
+  .logo-card { background:var(--card); color:var(--ink); border:1px solid var(--line); border-radius:18px; padding:18px; }
+  .logo-row { display:flex; align-items:center; gap:14px; margin-bottom:14px; }
+  .logo-row svg.big { width:76px; height:76px; }
+  .logo-row svg.sm { width:32px; height:32px; }
+  .logo-row svg.xs { width:16px; height:16px; }
+  .lockup { display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px; background:var(--bg); border:1px solid var(--line); margin-bottom:12px; }
+  .lockup svg { width:30px; height:30px; flex:none; }
+  .lockup b { font:600 1rem Georgia,serif; }
+  .logo-card h3 { margin:0 0 4px; font:600 1.05rem Georgia,serif; }
+  .logo-card p { margin:0; font-size:.86rem; color:var(--ink-soft); }
+  .picker { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 18px; }
+  .picker button { font:600 .85rem system-ui; padding:7px 14px; border-radius:99px; border:1px solid #ccc; background:#fff; color:#222; cursor:pointer; }
+  .picker button[aria-pressed="true"] { background:#222; color:#fff; border-color:#222; }
+  .tag { display:inline-block; font:700 .64rem/1 system-ui; letter-spacing:.06em; text-transform:uppercase; padding:4px 7px; border-radius:6px; background:var(--accent-soft); color:var(--accent-ink); margin-left:6px; vertical-align:middle; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="intro">
+    <h1>Цвета и логотип: варианты</h1>
+    <p>Пять палитр, у каждой светлая и тёмная тема. Они собраны из тех же переменных, что и <code>src/styles.css</code>, поэтому любая подставляется в сайт заменой блока <code>:root</code>. Ниже пять вариантов логотипа: переключатель над ними перекрашивает их в выбранную палитру.</p>
+  </div>
+
+  <h2>Палитры</h2>
+  <p class="sub">На каждой карточке: шапка, заголовок, демо с вероятностями и кнопки.</p>
+  <div class="grid" id="palettes"></div>
+
+  <h2>Логотипы</h2>
+  <p class="sub">Каждый показан в трёх размерах (76, 32 и 16 px, последний — как значок вкладки) и рядом с названием сайта.</p>
+  <div class="picker" id="picker"></div>
+  <div class="logos p-amber" id="logos"></div>
+</div>
+
+<script>
+const PALETTES = [
+  ['p-amber', 'Янтарь', 'текущая', 'Тёплая и дружелюбная, «ламповая». Хорошо подходит для объяснялки. Минус: оранжевый плохо читается как текст, поэтому нужен отдельный тёмный оттенок.'],
+  ['p-coral', 'Чернила и коралл', 'редакционная', 'Как у научно-популярного журнала: тёмно-синий текст, коралловые акценты, бирюзовый как второй цвет. Спокойная, но запоминается.'],
+  ['p-indigo', 'Индиго', 'техно', 'Самая «айтишная»: индиго и салатовый. Сразу видно, что сайт про ИИ, но таких сайтов много.'],
+  ['p-sage', 'Шалфей', 'учебная', 'Зелёный с горчичным, мягкий и учебный. Меньше всего утомляет глаза при долгом чтении.'],
+  ['p-paper', 'Бумага', 'минимализм', 'Чёрное на бумаге с одним красным акцентом, как учебник с пометками. Строгая, вся выразительность держится на шрифте.'],
+];
+
+function mock(cls, logo) {
+  return `<div class="mock ${cls}">
+    <div class="mock-bar">${logo}<i></i><span class="mock-pill">04 Внимание ▾</span></div>
+    <div class="mock-k">Объяснялка без формул</div>
+    <h3>Как работают языковые модели</h3>
+    <p>Модель — машина, которая угадывает следующее слово.</p>
+    <div class="mock-card">
+      <div class="row"><span>пряник</span><div class="track"><i style="width:72%"></i></div><span>48%</span></div>
+      <div class="row"><span>домик</span><div class="track"><i style="width:40%"></i></div><span>27%</span></div>
+      <div class="row"><span>человек</span><div class="track"><i style="width:22%"></i></div><span>15%</span></div>
+      <div class="btns"><span class="btn">Сгенерировать</span><span class="btn ghost">Сброс</span></div>
+    </div>
+  </div>`;
+}
+
+/* Логотипы: цвета берутся из переменных палитры. */
+const LOGOS = [
+  ['bars', 'Полоски вероятностей', 'Текущий знак, только аккуратнее: три полоски — варианты следующего слова, точка отмечает выбранный. Читается даже в 16 px.',
+   `<svg viewBox="0 0 64 64"><rect x="2" y="2" width="60" height="60" rx="18" fill="var(--accent)"/><rect x="13" y="16" width="30" height="7" rx="3.5" fill="var(--on-accent)"/><rect x="13" y="28.5" width="21" height="7" rx="3.5" fill="var(--on-accent)" opacity=".7"/><rect x="13" y="41" width="12" height="7" rx="3.5" fill="var(--on-accent)" opacity=".45"/><circle cx="50" cy="19.5" r="5.5" fill="var(--on-accent)"/></svg>`],
+  ['bubble', 'Реплика с курсором', 'Облачко чата, внутри два токена и мигающий курсор: модель дописывает следующий. Сразу понятно, что речь о чат-ботах.',
+   `<svg viewBox="0 0 64 64"><path d="M14 8h36a10 10 0 0 1 10 10v20a10 10 0 0 1-10 10H30l-11 9v-9h-5A10 10 0 0 1 4 38V18A10 10 0 0 1 14 8z" fill="var(--accent)"/><rect x="13" y="23" width="12" height="10" rx="3" fill="var(--on-accent)"/><rect x="28" y="23" width="9" height="10" rx="3" fill="var(--on-accent)" opacity=".7"/><rect x="41" y="20" width="4" height="16" rx="2" fill="var(--on-accent)"><animate attributeName="opacity" values="1;0;1" dur="1.1s" repeatCount="indefinite"/></rect></svg>`],
+  ['attention', 'Дуги внимания', 'Три точки-слова, связанные дугами, — механизм внимания. Самый «умный» и графичный вариант, хорошо смотрится крупно.',
+   `<svg viewBox="0 0 64 64"><rect x="2" y="2" width="60" height="60" rx="18" fill="var(--ink)"/><path d="M14 42C14 24 32 24 32 42" fill="none" stroke="var(--accent)" stroke-width="3.5" stroke-linecap="round"/><path d="M14 42C14 14 50 14 50 42" fill="none" stroke="var(--warm)" stroke-width="3.5" stroke-linecap="round" opacity=".9"/><path d="M32 42c0-10 18-10 18 0" fill="none" stroke="var(--accent)" stroke-width="3.5" stroke-linecap="round" opacity=".55"/><circle cx="14" cy="44" r="5" fill="var(--bg)"/><circle cx="32" cy="44" r="5" fill="var(--bg)"/><circle cx="50" cy="44" r="5.5" fill="var(--accent)"/></svg>`],
+  ['next', 'Следующая буква', 'Типографский знак: «Аб» и призрачная третья буква в акцентном цвете — то самое угаданное продолжение. Хорошо сочетается с засечным заголовком.',
+   `<svg viewBox="0 0 64 64"><rect x="2" y="2" width="60" height="60" rx="18" fill="var(--accent-soft)"/><text x="8" y="41" font-family="Georgia,serif" font-size="25" font-weight="700" fill="var(--ink)">Аб</text><text x="40" y="41" font-family="Georgia,serif" font-size="25" font-weight="700" fill="var(--accent)" opacity=".55">в</text><rect x="40" y="46" width="15" height="3" rx="1.5" fill="var(--accent)"/></svg>`],
+  ['histo', 'Распределение', 'Вертикальные столбики — распределение вероятностей, выбранный выделен цветом. Самый абстрактный и «научный», при этом простой.',
+   `<svg viewBox="0 0 64 64"><rect x="2" y="2" width="60" height="60" rx="18" fill="var(--card)" stroke="var(--line)" stroke-width="2"/><rect x="12" y="34" width="7" height="16" rx="3" fill="var(--muted)" opacity=".45"/><rect x="22" y="24" width="7" height="26" rx="3" fill="var(--muted)" opacity=".6"/><rect x="32" y="13" width="7" height="37" rx="3" fill="var(--accent)"/><rect x="42" y="28" width="7" height="22" rx="3" fill="var(--muted)" opacity=".55"/></svg>`],
+];
+
+const pal = document.getElementById('palettes');
+pal.innerHTML = PALETTES.map(([cls, name, tag, note]) => {
+  const logo = LOGOS[0][3];
+  const sw = ['--bg','--ink','--accent','--accent-ink','--accent-soft','--warm'].map(v => `<div style="background:var(${v})" title="${v}"></div>`).join('');
+  return `<div class="pal ${cls}">
+    <div class="pal-head"><b>${name}</b><span>${tag}</span></div>
+    <div class="modes">${mock(cls, logo)}${mock(cls + ' dark', logo)}</div>
+    <div class="swatches">${sw}</div>
+    <p class="pal-note">${note}</p>
+  </div>`;
+}).join('');
+
+const logos = document.getElementById('logos');
+logos.innerHTML = LOGOS.map(([id, name, note, svg]) => `<div class="logo-card">
+  <div class="logo-row">${svg.replace('<svg ', '<svg class="big" ')}${svg.replace('<svg ', '<svg class="sm" ')}${svg.replace('<svg ', '<svg class="xs" ')}</div>
+  <div class="lockup">${svg}<b>Как работают LLM</b></div>
+  <h3>${name}</h3><p>${note}</p></div>`).join('');
+
+const picker = document.getElementById('picker');
+picker.innerHTML = PALETTES.map(([cls, name], i) => `<button data-cls="${cls}" aria-pressed="${i === 0}">${name}</button>`).join('')
+  + `<button data-dark aria-pressed="false">Тёмная</button>`;
+let current = 'p-amber', dark = false;
+picker.addEventListener('click', (e) => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.hasAttribute('data-dark')) { dark = !dark; b.setAttribute('aria-pressed', dark); }
+  else { current = b.dataset.cls; picker.querySelectorAll('[data-cls]').forEach(x => x.setAttribute('aria-pressed', x === b)); }
+  logos.className = 'logos ' + current + (dark ? ' dark' : '');
+});
+</script>
+</body>
+</html>

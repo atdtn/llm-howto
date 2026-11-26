@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Облачко чата: модель дописывает ответ токен за токеном. Цвета на странице берутся из палитры (styles.css). -->
+  <path class="lg-bubble" fill="#ff9f1c" d="M14 6h36a10 10 0 0 1 10 10v22a10 10 0 0 1-10 10H31l-12 10v-10h-5A10 10 0 0 1 4 38V16A10 10 0 0 1 14 6z"/>
+  <!-- два готовых токена -->
+  <rect class="lg-ink" fill="#fff" x="13" y="22" width="13" height="10" rx="3"/>
+  <rect class="lg-ink" fill="#fff" fill-opacity=".72" x="29" y="22" width="9" height="10" rx="3"/>
+  <!-- курсор: здесь появится следующий токен -->
+  <rect class="lg-ink lg-cursor" fill="#fff" x="42" y="19" width="4" height="16" rx="2"/>
+</svg>

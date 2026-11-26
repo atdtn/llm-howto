@@ -108,6 +108,11 @@ The canonical and sitemap addresses use `https://atdtn.github.io/llm-howto/`. To
 ```
 src/index.html          Page template; text marked with data-i18n keys
 src/styles.css          Styling
+src/logo.svg             Site logo (also the favicon)
+src/js/theme.js         Appearance settings: mode (auto/light/dark) and palette, remembered in the browser
+src/js/nav.js           Header: section menu, current-section highlight, reading progress
+src/og/, src/*.png      Social preview images and icons, drawn by scripts/render-images.js
+src/fonts/              Onest font for the site name (OFL license), self-hosted
 src/js/i18n/*.js        Dictionaries: en (source), ru, de — page text, demo data, corpus
 src/js/i18n.js          Translator for the demos (language from the page)
 src/js/model.js         Tokenizer and n-gram model: counts, predictions, temperature, sampling
@@ -119,6 +124,8 @@ src/js/main.js          Builds the toy model from the page language's corpus and
 src/js/demo/*.js        One file per interactive section, wired to the page
 src/js/tests/           Unit tests (including site build tests)
 scripts/build.js        Builds dist/: one page per language, sitemap.xml, robots.txt
+scripts/render-images.js  Redraws images and icons (needs playwright-core, see the file)
+design/                 Palette and logo options (not deployed)
 .github/workflows/      GitHub Pages deployment (tests, build, deploy)
 ```
 

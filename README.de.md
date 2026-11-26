@@ -108,6 +108,11 @@ Die Adressen für canonical und Sitemap nutzen `https://atdtn.github.io/llm-howt
 ```
 src/index.html          Seitenvorlage; Texte mit data-i18n-Schlüsseln markiert
 src/styles.css          Styles
+src/logo.svg             Logo der Website (zugleich Favicon)
+src/js/theme.js         Darstellung: Modus (auto/hell/dunkel) und Farbpalette, wird im Browser gemerkt
+src/js/nav.js           Kopfzeile: Abschnittsmenü, aktueller Abschnitt, Lesefortschritt
+src/og/, src/*.png      Vorschaubilder für soziale Netzwerke und Icons, erzeugt von scripts/render-images.js
+src/fonts/              Schrift Onest für den Seitennamen (OFL-Lizenz), lokal eingebunden
 src/js/i18n/*.js        Wörterbücher: en (Quelle), ru, de — Seitentexte, Demo-Daten, Korpus
 src/js/i18n.js          Übersetzer für die Demos (Sprache von der Seite)
 src/js/model.js         Tokenizer und n-Gramm-Modell: Zählung, Vorhersagen, Temperatur, Auswahl
@@ -119,6 +124,8 @@ src/js/main.js          Baut das Modell aus dem Korpus der Seitensprache und sta
 src/js/demo/*.js        Eine Datei pro interaktivem Abschnitt
 src/js/tests/           Unit-Tests (auch für den Seitenbau)
 scripts/build.js        Baut dist/: eine Seite pro Sprache, sitemap.xml, robots.txt
+scripts/render-images.js  Zeichnet Bilder und Icons neu (braucht playwright-core, siehe Datei)
+design/                 Varianten für Paletten und Logo (wird nicht veröffentlicht)
 .github/workflows/      Veröffentlichung auf GitHub Pages (Tests, Build, Deployment)
 ```
 

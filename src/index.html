@@ -3,37 +3,98 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    /* Режим и палитра выбираются до первой отрисовки, чтобы страница не мигала (см. js/theme.js). */
+    try {
+      var savedTheme = localStorage.getItem('llm-howto.theme');
+      if (savedTheme === 'light' || savedTheme === 'dark') {
+        document.documentElement.dataset.theme = savedTheme;
+      }
+      var savedPalette = localStorage.getItem('llm-howto.palette');
+      if (/^(amber|coral|indigo|sage|paper)$/.test(savedPalette || '')) {
+        document.documentElement.dataset.palette = savedPalette;
+      }
+    } catch (error) {}
+    document.documentElement.classList.add('js');
+  </script>
   <title data-i18n="meta.title">How Language Models Work — Visually</title>
   <meta name="description" content="" data-i18n-attr="content:meta.description">
+  <meta name="theme-color" content="#fffdf7">
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  <header class="hero">
-    <div class="wrap">
-      <div class="top-bar">
+<body id="top">
+  <!-- Шапка: одна строка, прилипает к верху. Меню разделов — выпадающее до 1200px и боковая колонка шире. -->
+  <header class="site-header" id="site-header">
+    <div class="header-bar">
+      <a class="brand" href="#top" data-i18n-attr="aria-label:brand.home" aria-label="Back to top">
+        <!-- logo -->
+        <span class="brand-name" data-i18n="brand.name">How LLMs work</span>
+      </a>
+      <button type="button" class="toc-toggle" id="toc-toggle" aria-expanded="false" aria-controls="toc" data-i18n-attr="aria-label:toc.menu" aria-label="Section list">
+        <span class="toc-toggle-num" id="toc-current-num" hidden></span>
+        <span class="toc-toggle-label" id="toc-current-label" data-i18n="toc.label">Sections</span>
+        <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="header-actions">
         <!-- language-switcher -->
-        <a class="gh-link" href="https://github.com/atdtn/llm-howto" target="_blank" rel="noopener"><svg class="gh-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span data-i18n="github.label">View on GitHub</span></a>
+        <div class="settings" id="settings">
+          <button type="button" class="icon-btn" id="settings-toggle" aria-expanded="false" aria-controls="settings-panel" data-i18n-attr="aria-label:settings.label" aria-label="Appearance">
+            <svg class="settings-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.84-.44-1.13-.29-.29-.44-.65-.44-1.13a1.64 1.64 0 0 1 1.67-1.67h2c3.05 0 5.55-2.5 5.55-5.55C21.97 6.01 17.46 2 12 2z"/><circle cx="7.5" cy="10.5" r="1.3"/><circle cx="10.5" cy="6.8" r="1.3"/><circle cx="15.2" cy="7.5" r="1.3"/></svg>
+          </button>
+          <div class="settings-panel" id="settings-panel" role="group" aria-labelledby="settings-title" hidden>
+            <p class="settings-title" id="settings-title" data-i18n="settings.label">Appearance</p>
+            <fieldset class="settings-group">
+              <legend data-i18n="settings.mode">Mode</legend>
+              <div class="seg">
+              <label><input type="radio" name="theme-mode" value="auto"><span data-i18n="settings.mode.auto">Auto</span></label>
+              <label><input type="radio" name="theme-mode" value="light"><span data-i18n="settings.mode.light">Light</span></label>
+              <label><input type="radio" name="theme-mode" value="dark"><span data-i18n="settings.mode.dark">Dark</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="settings-group">
+              <legend data-i18n="settings.palette">Colors</legend>
+              <div class="palette-list">
+              <label class="palette-option"><input type="radio" name="theme-palette" value="amber"><span class="palette-swatch" style="--s1:#ff9f1c;--s2:#2b2115;--s3:#fff2cc" aria-hidden="true"></span><span data-i18n="palette.amber">Amber</span></label>
+              <label class="palette-option"><input type="radio" name="theme-palette" value="coral"><span class="palette-swatch" style="--s1:#d03c21;--s2:#1f1d2b;--s3:#fde6df" aria-hidden="true"></span><span data-i18n="palette.coral">Coral</span></label>
+              <label class="palette-option"><input type="radio" name="theme-palette" value="indigo"><span class="palette-swatch" style="--s1:#5b5bd6;--s2:#15163a;--s3:#ebebfd" aria-hidden="true"></span><span data-i18n="palette.indigo">Indigo</span></label>
+              <label class="palette-option"><input type="radio" name="theme-palette" value="sage"><span class="palette-swatch" style="--s1:#257a5a;--s2:#1c2a21;--s3:#e1f1e8" aria-hidden="true"></span><span data-i18n="palette.sage">Sage</span></label>
+              <label class="palette-option"><input type="radio" name="theme-palette" value="paper"><span class="palette-swatch" style="--s1:#d6332b;--s2:#141414;--s3:#fbe4e2" aria-hidden="true"></span><span data-i18n="palette.paper">Paper</span></label>
+              </div>
+            </fieldset>
+          </div>
+        </div>
+        <a class="icon-btn" href="https://github.com/atdtn/llm-howto" target="_blank" rel="noopener" data-i18n-attr="aria-label:github.label" aria-label="View on GitHub"><svg class="gh-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
       </div>
+    </div>
+    <div class="read-progress" aria-hidden="true"><span id="read-progress"></span></div>
+  </header>
+
+  <nav class="toc" id="toc" data-i18n-attr="aria-label:toc.label" aria-label="Sections">
+    <p class="toc-title" data-i18n="toc.label">Sections</p>
+    <ol class="toc-list">
+      <li><a href="#predict"><span class="toc-num">01</span><span class="toc-text" data-i18n="toc.predict">predict</span></a></li>
+      <li><a href="#tokens"><span class="toc-num">02</span><span class="toc-text" data-i18n="toc.tokens">tokens</span></a></li>
+      <li><a href="#context"><span class="toc-num">03</span><span class="toc-text" data-i18n="toc.context">context</span></a></li>
+      <li><a href="#attention"><span class="toc-num">04</span><span class="toc-text" data-i18n="toc.attention">attention</span></a></li>
+      <li><a href="#generate"><span class="toc-num">05</span><span class="toc-text" data-i18n="toc.generate">generate</span></a></li>
+      <li><a href="#temperature"><span class="toc-num">06</span><span class="toc-text" data-i18n="toc.temperature">temperature</span></a></li>
+      <li><a href="#learn"><span class="toc-num">07</span><span class="toc-text" data-i18n="toc.learn">learn</span></a></li>
+      <li><a href="#inside"><span class="toc-num">08</span><span class="toc-text" data-i18n="toc.inside">inside</span></a></li>
+      <li><a href="#finale"><span class="toc-num">09</span><span class="toc-text" data-i18n="toc.finale">finale</span></a></li>
+    </ol>
+  </nav>
+
+  <div class="hero">
+    <div class="wrap">
       <p class="kicker" data-i18n="hero.kicker">An explainer without formulas</p>
       <h1 data-i18n-html="hero.title">How language<br>models work</h1>
       <p class="lead" data-i18n="hero.lead">Chatbots, translators, autocomplete on your phone — they are all language models. Here you can get hands-on with the core idea behind them.</p>
       <p class="hero-callout" data-i18n="hero.callout">The main idea: a model is a machine that guesses the next word. Everything else is detail on top of that guess.</p>
     </div>
-  </header>
-
-  <nav class="toc" data-i18n-attr="aria-label:toc.label" aria-label="Sections">
-    <div class="wrap">
-      <a href="#predict" data-i18n="toc.predict">01 Guess the next word</a>
-      <a href="#tokens" data-i18n="toc.tokens">02 Tokens</a>
-      <a href="#context" data-i18n="toc.context">03 Context</a>
-      <a href="#attention" data-i18n="toc.attention">04 Attention</a>
-      <a href="#generate" data-i18n="toc.generate">05 One token at a time</a>
-      <a href="#temperature" data-i18n="toc.temperature">06 Temperature</a>
-      <a href="#learn" data-i18n="toc.learn">07 Learning</a>
-      <a href="#inside" data-i18n="toc.inside">08 Inside</a>
-      <a href="#finale" data-i18n="toc.finale">09 Wrap-up</a>
-    </div>
-  </nav>
+  </div>
 
   <main class="wrap">
 
@@ -77,12 +138,14 @@
 
       <div class="demo">
         <div class="context-switch" role="tablist" data-i18n-attr="aria-label:context.tabsLabel" aria-label="Contexts of the word “key”">
-          <button class="context-tab is-active" data-context="door" role="tab" aria-selected="true" data-i18n="context.tab.door">a door key</button>
-          <button class="context-tab" data-context="music" role="tab" aria-selected="false" data-i18n="context.tab.music">a treble clef</button>
+          <button type="button" class="context-tab is-active" id="context-tab-door" data-context="door" role="tab" aria-selected="true" aria-controls="context-panel" data-i18n="context.tab.door">a door key</button>
+          <button type="button" class="context-tab" id="context-tab-music" data-context="music" role="tab" aria-selected="false" aria-controls="context-panel" tabindex="-1" data-i18n="context.tab.music">a treble clef</button>
         </div>
-        <p class="context-sentence" id="context-sentence"></p>
-        <p class="field-label" data-i18n="context.neighborsLabel">Words the model considers close:</p>
-        <div class="neighbor-chips" id="context-out"></div>
+        <div id="context-panel" role="tabpanel" aria-labelledby="context-tab-door">
+          <p class="context-sentence" id="context-sentence"></p>
+          <p class="field-label" data-i18n="context.neighborsLabel">Words the model considers close:</p>
+          <div class="neighbor-chips" id="context-out"></div>
+        </div>
         <p class="demo-note" data-i18n="context.note">This is an illustration. A real model stores word meanings as sets of numbers and finds close neighbours on its own.</p>
       </div>
 
@@ -261,6 +324,8 @@
   <script src="js/demo/temperature.js"></script>
   <script src="js/demo/learn.js"></script>
   <script src="js/demo/inside.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/nav.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

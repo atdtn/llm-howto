@@ -84,6 +84,22 @@ test('страницы: переключатель языка ведёт на д
   assert.match(en, /<a href="de\/" hreflang="de"/);
 });
 
+test('страницы: логотип, иконка сайта и переключатель темы', () => {
+  for (const [rel, prefix] of [['index.html', ''], ['ru/index.html', '../'], ['de/index.html', '../']]) {
+    const html = read(rel);
+    assert.match(html, /<svg class="brand-mark" role="img" aria-label="[^"]+"/, `${rel}: логотип`);
+    assert.ok(html.includes(`<link rel="icon" href="${prefix}logo.svg" type="image/svg+xml">`), `${rel}: иконка`);
+    assert.ok(html.includes('id="settings-toggle"'), `${rel}: кнопка настроек`);
+    assert.strictEqual((html.match(/name="theme-palette"/g) || []).length, 5, `${rel}: пять палитр`);
+    assert.ok(html.includes("localStorage.getItem('llm-howto.palette')"), `${rel}: палитра до отрисовки`);
+    assert.ok(html.includes(`<link rel="apple-touch-icon" href="${prefix}apple-touch-icon.png">`), `${rel}: значок iOS`);
+    assert.ok(html.includes('<meta name="theme-color"'), `${rel}: цвет строки браузера`);
+    assert.ok(html.includes(`src="${prefix}js/theme.js"`), `${rel}: скрипт темы`);
+    assert.ok(html.includes("localStorage.getItem('llm-howto.theme')"), `${rel}: тема до отрисовки`);
+  }
+  assert.ok(fs.existsSync(path.join(OUT, 'logo.svg')));
+});
+
 test('страницы: пути к стилям и скриптам ведут к корню сайта', () => {
   const ru = read('ru/index.html');
   assert.ok(ru.includes('href="../styles.css"'));
@@ -127,3 +143,48 @@ test('translateMarkup: текст экранируется, атрибуты з�
 test('translateMarkup: ошибка, если закрывающий тег не найден', () => {
   assert.throws(() => translateMarkup('<p data-i18n="k">no close', () => 'x'), /no closing/);
 });
+
+test('страницы: шапка с меню разделов, меню языков и скриптом навигации', () => {
+  const pages = { en: '', ru: 'ru/', de: 'de/' };
+  for (const code of LANGS) {
+    const prefix = pages[code] ? '../' : '';
+    const html = read(path.join(pages[code], 'index.html'));
+    assert.ok(html.includes('id="toc-toggle"'), `${code}: кнопка меню`);
+    assert.ok(html.includes('aria-controls="toc"'), `${code}: кнопка связана с меню`);
+    assert.strictEqual((html.match(/<a href="#[a-z]+"><span class="toc-num">/g) || []).length, 9, `${code}: девять разделов`);
+    assert.ok(/<details class="lang-menu">/.test(html), `${code}: меню языков`);
+    assert.ok(html.includes(`<span class="lang-code">${code.toUpperCase()}</span>`), `${code}: код языка`);
+    assert.ok(html.includes(`src="${prefix}js/nav.js"`), `${code}: скрипт меню`);
+    assert.strictEqual((html.match(/<header[\s>]/g) || []).length, 1, `${code}: одна шапка (banner)`);
+  }
+});
+
+test('страницы: картинка для соцсетей на языке страницы', () => {
+  const pages = { en: '', ru: 'ru/', de: 'de/' };
+  for (const code of LANGS) {
+    const html = read(path.join(pages[code], 'index.html'));
+    const image = `${SITE}og/og-${code}.png`;
+    assert.ok(html.includes(`<meta property="og:image" content="${image}">`), `${code}: og:image`);
+    assert.ok(html.includes(`<meta name="twitter:image" content="${image}">`), `${code}: twitter:image`);
+    assert.ok(html.includes('<meta name="twitter:card" content="summary_large_image">'), `${code}: большая карточка`);
+    assert.ok(fs.existsSync(path.join(OUT, 'og', `og-${code}.png`)), `${code}: файл картинки`);
+  }
+  assert.ok(fs.existsSync(path.join(OUT, 'apple-touch-icon.png')));
+  assert.ok(fs.existsSync(path.join(OUT, 'favicon-32.png')));
+  for (const sub of ['latin', 'latin-ext', 'cyrillic']) {
+    assert.ok(fs.existsSync(path.join(OUT, 'fonts', `onest-700-${sub}.woff2`)), `шрифт ${sub}`);
+  }
+});
+
+test('палитры: одинаковый список в theme.js, styles.css и скрипте в <head>', () => {
+  const { PALETTES } = require('../theme.js');
+  const css = fs.readFileSync(path.join(__dirname, '..', '..', 'styles.css'), 'utf8');
+  const head = fs.readFileSync(path.join(__dirname, '..', '..', 'index.html'), 'utf8');
+  for (const name of PALETTES) {
+    assert.ok(css.includes(`:root[data-palette="${name}"]`), `styles.css: ${name}`);
+    assert.ok(head.includes(`value="${name}"`), `index.html: вариант ${name}`);
+  }
+  const headList = head.match(/\^\(([a-z|]+)\)\$/)[1].split('|');
+  assert.deepStrictEqual(headList, PALETTES);
+});
+

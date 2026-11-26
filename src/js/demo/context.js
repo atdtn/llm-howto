@@ -31,15 +31,31 @@
           out.appendChild(chip);
         });
 
+        /* Вкладки по правилам ARIA: в порядке Tab только активная, остальные — стрелками. */
         tabs.forEach((tab) => {
           const active = tab.dataset.context === key;
           tab.classList.toggle('is-active', active);
           tab.setAttribute('aria-selected', String(active));
+          tab.tabIndex = active ? 0 : -1;
+          if (active && panel) panel.setAttribute('aria-labelledby', tab.id);
         });
       };
 
-      tabs.forEach((tab) => {
+      const panel = document.getElementById('context-panel');
+
+      tabs.forEach((tab, index) => {
         tab.addEventListener('click', () => render(tab.dataset.context));
+        tab.addEventListener('keydown', (event) => {
+          const moves = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+          let next = null;
+          if (event.key in moves) next = (index + moves[event.key] + tabs.length) % tabs.length;
+          else if (event.key === 'Home') next = 0;
+          else if (event.key === 'End') next = tabs.length - 1;
+          if (next === null) return;
+          event.preventDefault();
+          render(tabs[next].dataset.context);
+          tabs[next].focus();
+        });
       });
 
       render('door');

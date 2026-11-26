@@ -1,35 +1,234 @@
+/*
+ * Оформление: палитра × режим.
+ *  - Палитра — атрибут data-palette на <html> (amber по умолчанию). У каждой палитры
+ *    два набора цветов: --l-* для светлого режима и --d-* для тёмного.
+ *  - Режим — атрибут data-theme="light|dark"; без него — как в системе.
+ *  - Все стили ниже пользуются только итоговыми переменными (--bg, --accent и т. д.).
+ * Для текста используется --accent-ink: он темнее (светлее в тёмном режиме), чем --accent,
+ * и читается на фоне. Список палитр должен совпадать с PALETTES в js/theme.js.
+ */
+
+:root,
+:root[data-palette="amber"] {
+  --l-bg: #fffdf7;
+  --l-card: #ffffff;
+  --l-ink: #2b2115;
+  --l-ink-soft: #4d3f2c;
+  --l-muted: #7a6a52;
+  --l-line: #f1e4c4;
+  --l-accent: #ff9f1c;
+  --l-accent-ink: #a14f00;
+  --l-accent-soft: #fff2cc;
+  --l-on-accent: #2b2115;
+  --l-warm: #ffd23f;
+  --l-good: #2f7a2b;
+  --d-bg: #1f1a12;
+  --d-card: #2a2317;
+  --d-ink: #fff6dc;
+  --d-ink-soft: #f1e4bf;
+  --d-muted: #b9a684;
+  --d-line: #4a3d24;
+  --d-accent: #ffb020;
+  --d-accent-ink: #ffc54d;
+  --d-accent-soft: #3d3014;
+  --d-on-accent: #2b1d05;
+  --d-warm: #ffd23f;
+  --d-good: #8fd186;
+}
+
+:root[data-palette="coral"] {
+  --l-bg: #faf7f2;
+  --l-card: #ffffff;
+  --l-ink: #1f1d2b;
+  --l-ink-soft: #3d3a4f;
+  --l-muted: #6a657b;
+  --l-line: #ebe4da;
+  --l-accent: #d03c21;
+  --l-accent-ink: #b8341b;
+  --l-accent-soft: #fde6df;
+  --l-on-accent: #ffffff;
+  --l-warm: #f59e6b;
+  --l-good: #23744d;
+  --d-bg: #17161f;
+  --d-card: #211f2c;
+  --d-ink: #f4f1ea;
+  --d-ink-soft: #d8d3e3;
+  --d-muted: #9a94ad;
+  --d-line: #353246;
+  --d-accent: #ff7a5c;
+  --d-accent-ink: #ff9c85;
+  --d-accent-soft: #3a2420;
+  --d-on-accent: #1a0d08;
+  --d-warm: #ffb38a;
+  --d-good: #6fd3a0;
+}
+
+:root[data-palette="indigo"] {
+  --l-bg: #f7f7fc;
+  --l-card: #ffffff;
+  --l-ink: #15163a;
+  --l-ink-soft: #33355e;
+  --l-muted: #65678c;
+  --l-line: #e3e3f2;
+  --l-accent: #5b5bd6;
+  --l-accent-ink: #4343b8;
+  --l-accent-soft: #ebebfd;
+  --l-on-accent: #ffffff;
+  --l-warm: #a78bfa;
+  --l-good: #23744d;
+  --d-bg: #0f1024;
+  --d-card: #171933;
+  --d-ink: #eef0ff;
+  --d-ink-soft: #c9cbf0;
+  --d-muted: #9799c6;
+  --d-line: #2b2d52;
+  --d-accent: #8b8bff;
+  --d-accent-ink: #a9a9ff;
+  --d-accent-soft: #25275a;
+  --d-on-accent: #0f1024;
+  --d-warm: #c4b5fd;
+  --d-good: #7ee0a8;
+}
+
+:root[data-palette="sage"] {
+  --l-bg: #f5f7f2;
+  --l-card: #ffffff;
+  --l-ink: #1c2a21;
+  --l-ink-soft: #35483b;
+  --l-muted: #56685b;
+  --l-line: #dfe7da;
+  --l-accent: #257a5a;
+  --l-accent-ink: #1c6a4d;
+  --l-accent-soft: #e1f1e8;
+  --l-on-accent: #ffffff;
+  --l-warm: #e7b53c;
+  --l-good: #2a5fb8;
+  --d-bg: #111a15;
+  --d-card: #18241d;
+  --d-ink: #ecf4ee;
+  --d-ink-soft: #cddcd2;
+  --d-muted: #8fa596;
+  --d-line: #2a3a30;
+  --d-accent: #4cc395;
+  --d-accent-ink: #74d9b0;
+  --d-accent-soft: #1d3a2d;
+  --d-on-accent: #0b1a13;
+  --d-warm: #f2c552;
+  --d-good: #8db4ff;
+}
+
+:root[data-palette="paper"] {
+  --l-bg: #fbfaf6;
+  --l-card: #ffffff;
+  --l-ink: #141414;
+  --l-ink-soft: #333333;
+  --l-muted: #666666;
+  --l-line: #e7e4dc;
+  --l-accent: #d6332b;
+  --l-accent-ink: #b3241d;
+  --l-accent-soft: #fbe4e2;
+  --l-on-accent: #ffffff;
+  --l-warm: #f07a5a;
+  --l-good: #26702f;
+  --d-bg: #121212;
+  --d-card: #1c1c1c;
+  --d-ink: #f2f0ea;
+  --d-ink-soft: #d6d3cb;
+  --d-muted: #9b9992;
+  --d-line: #303030;
+  --d-accent: #ff5a4f;
+  --d-accent-ink: #ff8178;
+  --d-accent-soft: #3a1d1b;
+  --d-on-accent: #140504;
+  --d-warm: #ff9a80;
+  --d-good: #7fd08a;
+}
+
 :root {
-  --bg: #f7f3ec;
-  --card: #fffdf9;
-  --ink: #23201a;
-  --ink-soft: #454036;
-  --muted: #6f675b;
-  --line: #e2d9cb;
-  --accent: #c2542a;
-  --accent-ink: #9c4322;
-  --accent-soft: #f1e0d3;
-  --good: #2f7d5a;
-  --shadow: 0 10px 30px rgba(64, 44, 24, 0.08);
+  color-scheme: light;
+  --bg: var(--l-bg);
+  --card: var(--l-card);
+  --ink: var(--l-ink);
+  --ink-soft: var(--l-ink-soft);
+  --muted: var(--l-muted);
+  --line: var(--l-line);
+  --accent: var(--l-accent);
+  --accent-ink: var(--l-accent-ink);
+  --accent-soft: var(--l-accent-soft);
+  --on-accent: var(--l-on-accent);
+  --warm: var(--l-warm);
+  --good: var(--l-good);
+  --shadow: 0 10px 30px color-mix(in srgb, var(--l-ink) 9%, transparent);
   --radius: 14px;
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --brand: "Onest", var(--sans);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: var(--d-bg);
+  --card: var(--d-card);
+  --ink: var(--d-ink);
+  --ink-soft: var(--d-ink-soft);
+  --muted: var(--d-muted);
+  --line: var(--d-line);
+  --accent: var(--d-accent);
+  --accent-ink: var(--d-accent-ink);
+  --accent-soft: var(--d-accent-soft);
+  --on-accent: var(--d-on-accent);
+  --warm: var(--d-warm);
+  --good: var(--d-good);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #17140f;
-    --card: #211d17;
-    --ink: #efe9df;
-    --ink-soft: #d6cfc2;
-    --muted: #a89f90;
-    --line: #3a332a;
-    --accent: #e07a4a;
-    --accent-ink: #f0956b;
-    --accent-soft: #35251c;
-    --good: #6cc39a;
-    --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: var(--d-bg);
+    --card: var(--d-card);
+    --ink: var(--d-ink);
+    --ink-soft: var(--d-ink-soft);
+    --muted: var(--d-muted);
+    --line: var(--d-line);
+    --accent: var(--d-accent);
+    --accent-ink: var(--d-accent-ink);
+    --accent-soft: var(--d-accent-soft);
+    --on-accent: var(--d-on-accent);
+    --warm: var(--d-warm);
+    --good: var(--d-good);
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   }
+}
+
+/*
+ * Шрифт названия сайта в шапке — Onest 700 (SIL Open Font License, fonts/OFL.txt).
+ * Лежит на самом сайте, без внешних запросов. Браузер скачивает только нужный набор букв.
+ */
+@font-face {
+  font-family: "Onest";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("fonts/onest-700-cyrillic.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: "Onest";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("fonts/onest-700-latin-ext.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Onest";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("fonts/onest-700-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 * { box-sizing: border-box; }
@@ -52,87 +251,502 @@ body {
   padding: 0 24px;
 }
 
-/* Hero */
+/* ---------- Шапка ----------
+ * Одна строка, прилипает к верху: логотип, кнопка меню разделов, язык, тема, GitHub.
+ * Под ней — тонкая полоска прогресса чтения.
+ */
 
-.hero {
-  padding: 72px 0 40px;
+:root {
+  --header-h: 60px;
+  --rail-w: 210px;
 }
 
-/* Language switcher: обычные ссылки между языковыми страницами, работают и без JavaScript. */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: saturate(1.4) blur(12px);
+  -webkit-backdrop-filter: saturate(1.4) blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
 
-.top-bar {
+.site-header.is-scrolled {
+  border-bottom-color: var(--line);
+  box-shadow: 0 6px 20px -14px rgba(0, 0, 0, 0.35);
+}
+
+.header-bar {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px 16px;
-  margin-bottom: 28px;
+  gap: 10px;
+  max-width: 1200px;
+  height: var(--header-h);
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
-.lang-switch {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  font-size: 0.85rem;
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: var(--ink);
+  text-decoration: none;
+  border-radius: 10px;
 }
 
-/* Ссылка на GitHub: «таблетка» с логотипом. */
+.brand:focus-visible,
+.toc-toggle:focus-visible,
+.icon-btn:focus-visible,
+.toc a:focus-visible,
+.lang-switch a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
 
-.gh-link {
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  filter: drop-shadow(0 3px 8px color-mix(in srgb, var(--accent) 35%, transparent));
+}
+
+.brand-name {
+  font-family: var(--brand);
+  font-size: 1.12rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+}
+
+/* Кнопка меню разделов: показывает текущий раздел. */
+
+.toc-toggle {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 14px;
+  min-width: 0;
+  max-width: 340px;
+  height: 38px;
+  margin-left: auto;
+  padding: 0 12px 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink);
+  font: 600 0.88rem/1 var(--sans);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.toc-toggle:hover,
+.toc-toggle[aria-expanded="true"] { border-color: var(--accent); }
+
+.toc-toggle-num {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--accent-ink);
+}
+
+.toc-toggle-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chevron {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--muted);
+  transition: transform 0.2s;
+}
+
+.toc-toggle[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+
+/* Круглые кнопки: тема, GitHub, язык. */
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 10px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: var(--card);
   color: var(--ink-soft);
-  font-size: 0.85rem;
-  font-weight: 600;
+  font: 600 0.8rem/1 var(--sans);
   text-decoration: none;
-  box-shadow: var(--shadow);
-  transition: color 0.15s, border-color 0.15s, transform 0.15s;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
 }
 
-.gh-link:hover {
+.icon-btn:hover,
+.icon-btn[aria-expanded="true"] {
   color: var(--accent-ink);
   border-color: var(--accent);
-  transform: translateY(-1px);
 }
 
-.gh-link:focus-visible {
+.settings-icon,
+.globe {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.settings-icon circle { fill: currentColor; stroke: none; }
+
+/* Логотип в шапке перекрашивается вместе с палитрой. */
+.brand-mark .lg-bubble { fill: var(--accent); }
+.brand-mark .lg-ink { fill: var(--on-accent); }
+.brand-mark .lg-cursor { animation: cursor-blink 1.1s steps(2, jump-none) infinite; }
+
+@keyframes cursor-blink {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* ---------- Настройки оформления ---------- */
+
+.settings { position: relative; }
+
+html:not(.js) .settings { display: none; }
+
+.settings-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  width: 280px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.35);
+}
+
+.settings-panel[hidden] { display: none; }
+
+.settings-title {
+  margin: 0 0 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.settings-group {
+  margin: 0 0 14px;
+  padding: 0;
+  border: 0;
+}
+
+.settings-group:last-child { margin-bottom: 0; }
+
+.settings-group legend {
+  margin-bottom: 6px;
+  padding: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.settings-group input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Режим: сегментированный переключатель. */
+.seg {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+}
+
+.seg label {
+  display: block;
+  padding: 7px 4px;
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+}
+
+.seg label:hover { color: var(--ink); }
+
+.seg label:has(input:checked) {
+  background: var(--card);
+  color: var(--accent-ink);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+/* Палитры: образец цветов и название. */
+.palette-list {
+  display: grid;
+  gap: 2px;
+}
+
+.palette-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.palette-option:hover { background: var(--accent-soft); }
+
+.palette-option:has(input:checked) {
+  border-color: var(--accent);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.palette-swatch {
+  display: block;
+  width: 34px;
+  height: 20px;
+  flex: none;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--s1) 0 40%, var(--s2) 40% 70%, var(--s3) 70%);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.seg label:has(input:focus-visible),
+.palette-option:has(input:focus-visible) {
   outline: 2px solid var(--accent);
-  outline-offset: 3px;
+  outline-offset: 1px;
 }
 
 .gh-icon {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   flex: none;
 }
 
-.footer .footer-links {
-  margin: 14px 0 0;
-}
+/* Меню языков на <details>: работает и без JavaScript. */
 
-.gh-link-inline { box-shadow: none; }
+.lang-menu { position: relative; }
+
+.lang-summary { list-style: none; }
+.lang-summary::-webkit-details-marker { display: none; }
+.lang-menu[open] > .lang-summary { border-color: var(--accent); color: var(--accent-ink); }
+
+.lang-switch {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  display: grid;
+  min-width: 160px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
 
 .lang-switch a {
-  padding: 4px 12px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  color: var(--muted);
+  padding: 9px 12px;
+  border-radius: 8px;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
   text-decoration: none;
-  background: var(--card);
 }
 
-.lang-switch a:hover { color: var(--accent); border-color: var(--accent); }
+.lang-switch a:hover { background: var(--accent-soft); color: var(--accent-ink); }
 
 .lang-switch a.is-current {
   color: var(--accent-ink);
-  border-color: var(--accent);
-  background: var(--accent-soft);
   font-weight: 600;
+}
+
+.lang-switch a.is-current::after { content: " ✓"; }
+
+.read-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  pointer-events: none;
+}
+
+.read-progress span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--warm), var(--accent));
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+/* ---------- Меню разделов ---------- */
+
+.toc-title {
+  margin: 0 0 10px;
+  padding: 0 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.toc-list {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.toc a {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  color: var(--ink-soft);
+  font-size: 0.93rem;
+  font-weight: 500;
+  line-height: 1.3;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.toc-num {
+  flex: none;
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+.toc a:hover { background: var(--accent-soft); color: var(--ink); }
+
+.toc a[aria-current="true"] {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-weight: 650;
+}
+
+.toc a[aria-current="true"] .toc-num { color: var(--accent-ink); }
+
+/* Узкие экраны: выпадающая панель под шапкой. */
+@media (max-width: 1199.98px) {
+  .js .toc {
+    position: fixed;
+    top: calc(var(--header-h) + 6px);
+    left: 12px;
+    right: 12px;
+    z-index: 25;
+    max-width: 420px;
+    max-height: calc(100dvh - var(--header-h) - 24px);
+    margin: 0 auto;
+    padding: 14px 8px 8px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--card);
+    box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.18s, transform 0.18s, visibility 0s 0.18s;
+  }
+
+  .js .toc.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity 0.18s, transform 0.18s;
+  }
+
+  .toc a { padding: 11px 12px; }
+
+  /* Планшеты: панель справа, под кнопкой меню. */
+  @media (min-width: 561px) {
+    .js .toc {
+      left: auto;
+      right: max(12px, calc(50% - 600px + 12px));
+      width: 360px;
+      margin: 0;
+    }
+  }
+
+  /* Без JavaScript меню — обычный список под шапкой, кнопка не нужна. */
+  html:not(.js) .toc { padding: 16px 20px; border-bottom: 1px solid var(--line); }
+  html:not(.js) .toc-toggle { visibility: hidden; }
+}
+
+/* Широкие экраны: колонка слева от текста, всегда видна. */
+@media (min-width: 1200px) {
+  .toc-toggle { visibility: hidden; }
+
+  .toc {
+    position: fixed;
+    top: calc(var(--header-h) + 40px);
+    left: calc(50% - 400px + 120px - var(--rail-w) - 56px);
+    width: var(--rail-w);
+    max-height: calc(100vh - var(--header-h) - 80px);
+    overflow-y: auto;
+  }
+
+  /* Текст сдвигается вправо, чтобы колонка и текст стояли по центру вместе. */
+  .hero .wrap,
+  main.wrap,
+  .footer .wrap { margin-left: calc(50% - 400px + 120px); }
+}
+
+/* Телефоны: имя сайта прячем, кнопки поплотнее. */
+@media (max-width: 560px) {
+  :root { --header-h: 56px; }
+  .header-bar { gap: 8px; padding: 0 12px; }
+  .brand-name { display: none; }
+  .toc-toggle { flex: 1 1 auto; max-width: none; }
+  .lang-code { display: none; }
+  .lang-summary { padding: 0; width: 38px; }
+  .settings-panel { position: fixed; top: calc(var(--header-h) + 6px); left: 12px; right: 12px; width: auto; }
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+  padding: 56px 0 40px;
 }
 
 .kicker {
@@ -141,7 +755,7 @@ body {
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 h1 {
@@ -170,47 +784,12 @@ h1 {
   color: var(--ink);
 }
 
-/* TOC */
-
-.toc {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  backdrop-filter: blur(10px);
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-
-.toc .wrap {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  scrollbar-width: none;
-}
-
-.toc .wrap::-webkit-scrollbar { display: none; }
-
-.toc a {
-  flex: 0 0 auto;
-  color: var(--muted);
-  text-decoration: none;
-  font-size: 0.83rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-}
-
-.toc a:hover { color: var(--accent); }
-
 /* Sections */
 
 section {
   padding: 56px 0;
   border-bottom: 1px solid var(--line);
-  scroll-margin-top: 64px;
+  scroll-margin-top: calc(var(--header-h) + 20px);
 }
 
 section:last-of-type { border-bottom: 0; }
@@ -220,7 +799,7 @@ section:last-of-type { border-bottom: 0; }
   font-family: var(--mono);
   font-size: 0.8rem;
   letter-spacing: 0.1em;
-  color: var(--accent);
+  color: var(--accent-ink);
 }
 
 h2 {
@@ -319,7 +898,7 @@ section > p {
   height: 100%;
   width: 0;
   border-radius: 6px;
-  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 60%, #e8b04a));
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 60%, var(--warm)));
   transition: width 0.35s ease;
 }
 
@@ -385,16 +964,12 @@ section > p {
   transition: all 0.2s ease;
 }
 
-.context-tab:hover { border-color: var(--accent); color: var(--accent); }
+.context-tab:hover { border-color: var(--accent); color: var(--accent-ink); }
 
 .context-tab.is-active {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
-}
-
-@media (prefers-color-scheme: dark) {
-  .context-tab.is-active { color: #1a130e; }
+  color: var(--on-accent);
 }
 
 .context-sentence {
@@ -406,7 +981,7 @@ section > p {
 
 .context-sentence em {
   font-style: normal;
-  color: var(--accent);
+  color: var(--accent-ink);
   border-bottom: 2px solid var(--accent);
 }
 
@@ -455,11 +1030,7 @@ section > p {
 
 .aw.is-target {
   background: var(--accent);
-  color: #fff;
-}
-
-@media (prefers-color-scheme: dark) {
-  .aw.is-target { color: #1a130e; }
+  color: var(--on-accent);
 }
 
 .aw.is-source {
@@ -485,16 +1056,12 @@ section > p {
   border: 1px solid var(--accent);
   border-radius: 10px;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   font-family: var(--sans);
   font-size: 0.92rem;
   font-weight: 600;
   cursor: pointer;
   transition: opacity 0.2s ease;
-}
-
-@media (prefers-color-scheme: dark) {
-  .btn { color: #1a130e; }
 }
 
 .btn:hover { opacity: 0.88; }
@@ -529,7 +1096,7 @@ section > p {
 }
 
 .gen-token.is-new {
-  color: var(--accent);
+  color: var(--accent-ink);
   font-weight: 600;
   animation: chip-in 0.25s ease both;
 }
@@ -700,7 +1267,7 @@ section > p {
 
 @media (max-width: 560px) {
   body { font-size: 16px; }
-  .hero { padding: 48px 0 30px; }
+  .hero { padding: 36px 0 30px; }
   section { padding: 42px 0; }
   .demo { padding: 16px; }
   .pred-row { grid-template-columns: minmax(4.5rem, 6.5rem) 1fr 3.2rem; gap: 8px; }
@@ -1022,4 +1589,36 @@ button.cand-row {
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* Ссылка на GitHub в подвале. */
+
+.footer .footer-links { margin: 14px 0 0; }
+
+.gh-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.gh-link:hover { color: var(--accent-ink); border-color: var(--accent); }
+
+.gh-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.gh-link .gh-icon { width: 16px; height: 16px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .js .toc,
+  .chevron,
+  .site-header { transition: none !important; }
+  .brand-mark .lg-cursor { animation: none; }
 }

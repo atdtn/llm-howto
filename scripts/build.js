@@ -23,7 +23,10 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const SRC = path.join(ROOT, 'src');
+const LOGO = path.join(SRC, 'logo.svg');
 const DEFAULT_OUT = path.join(ROOT, 'dist');
+/** Значки; картинки в src/og/ и сами значки рисует scripts/render-images.js. */
+const STATIC_FILES = ['favicon-32.png', 'apple-touch-icon.png'];
 
 const DEFAULT_SITE_URL = 'https://atdtn.github.io/llm-howto/';
 const REPO_URL = 'https://github.com/atdtn/llm-howto';
@@ -118,15 +121,28 @@ function translateMarkup(html, t) {
   return out + html.slice(last);
 }
 
+/**
+ * Меню языков: <details> раскрывается и без JavaScript, внутри — обычные ссылки
+ * между языковыми страницами (их видят поисковики).
+ */
 function languageSwitcher(code, t) {
+  const NAMES = { en: 'English', ru: 'Русский', de: 'Deutsch' };
   const links = LANGS.map((other) => {
     const current = other === code;
     const cls = current ? ' class="is-current"' : '';
     const aria = current ? ' aria-current="true"' : '';
-    const label = { en: 'English', ru: 'Русский', de: 'Deutsch' }[other];
-    return `<a${cls} href="${relHref(code, other)}" hreflang="${other}" lang="${other}" data-lang-option="${other}"${aria}>${label}</a>`;
+    return `<a${cls} href="${relHref(code, other)}" hreflang="${other}" lang="${other}" data-lang-option="${other}"${aria}>${NAMES[other]}</a>`;
   });
-  return `<nav class="lang-switch" aria-label="${escapeHtml(t('lang.label'))}">${links.join('')}</nav>`;
+  const label = escapeHtml(t('lang.label'));
+  return [
+    `<details class="lang-menu">`,
+    `<summary class="icon-btn lang-summary" aria-label="${label}: ${NAMES[code]}">`,
+    `<svg class="globe" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>`,
+    `<span class="lang-code">${code.toUpperCase()}</span>`,
+    `</summary>`,
+    `<nav class="lang-switch" aria-label="${label}">${links.join('')}</nav>`,
+    `</details>`,
+  ].join('');
 }
 
 function jsonLd(data) {
@@ -138,6 +154,7 @@ function seoHead(code, tr, siteUrl) {
   const url = siteUrl + dirFor(code);
   const title = tr.t('meta.title');
   const description = tr.t('meta.description');
+  const image = `${siteUrl}og/og-${code}.png`;
   const alternates = LANGS.map(
     (lang) => `  <link rel="alternate" hreflang="${lang}" href="${siteUrl + dirFor(lang)}">`
   );
@@ -166,6 +183,7 @@ function seoHead(code, tr, siteUrl) {
         description,
         inLanguage: code,
         isPartOf: { '@id': siteUrl + '#website' },
+        primaryImageOfPage: { '@type': 'ImageObject', url: image, width: 1200, height: 630 },
       },
     ],
   };
@@ -180,7 +198,13 @@ function seoHead(code, tr, siteUrl) {
     `  <meta property="og:url" content="${url}">`,
     `  <meta property="og:locale" content="${OG_LOCALE[code]}">`,
     ...otherLocales,
-    `  <meta name="twitter:card" content="summary">`,
+    `  <meta property="og:image" content="${image}">`,
+    `  <meta property="og:image:type" content="image/png">`,
+    `  <meta property="og:image:width" content="1200">`,
+    `  <meta property="og:image:height" content="630">`,
+    `  <meta property="og:image:alt" content="${escapeHtml(tr.t('og.alt'))}">`,
+    `  <meta name="twitter:card" content="summary_large_image">`,
+    `  <meta name="twitter:image" content="${image}">`,
     `  <script type="application/ld+json">${jsonLd(graph)}</script>`,
   ].join('\n');
 }
@@ -191,15 +215,25 @@ function localeScripts(code, prefix) {
   return codes.map((c) => `  <script src="${prefix}js/i18n/${c}.js"></script>`).join('\n');
 }
 
-function renderPage(template, code, locales, siteUrl) {
+/** Логотип из src/logo.svg: доступное имя и класс для стилей. */
+function logoMarkup(svg, t) {
+  return svg.trim().replace(
+    '<svg ',
+    `<svg class="brand-mark" role="img" aria-label="${escapeHtml(t('logo.label'))}" `
+  );
+}
+
+function renderPage(template, code, locales, siteUrl, logoSvg) {
   const tr = i18n.createTranslator(locales, code);
   const prefix = dirFor(code) ? '../' : '';
 
   let html = template;
   html = html.replace('<html lang="en">', `<html lang="${code}" data-lang="${code}">`);
   html = html.replace('href="styles.css"', `href="${prefix}styles.css"`);
+  html = html.replace(/href="(logo\.svg|favicon-32\.png|apple-touch-icon\.png)"/g, `href="${prefix}$1"`);
   html = html.replace(/src="js\//g, `src="${prefix}js/`);
   html = html.replace('<!-- locale-scripts -->', localeScripts(code, prefix));
+  html = html.replace('<!-- logo -->', logoMarkup(logoSvg, tr.t));
   html = html.replace('<!-- language-switcher -->', languageSwitcher(code, tr.t));
   html = translateMarkup(html, tr.t);
   html = html.replace('</head>', seoHead(code, tr, siteUrl) + '\n</head>');
@@ -256,6 +290,7 @@ function loadLocales() {
 function build({ outDir = DEFAULT_OUT, siteUrl = process.env.SITE_URL || DEFAULT_SITE_URL } = {}) {
   const site = normalizeSiteUrl(siteUrl);
   const template = fs.readFileSync(path.join(SRC, 'index.html'), 'utf8');
+  const logoSvg = fs.readFileSync(LOGO, 'utf8');
   const locales = loadLocales();
 
   fs.rmSync(outDir, { recursive: true, force: true });
@@ -263,7 +298,7 @@ function build({ outDir = DEFAULT_OUT, siteUrl = process.env.SITE_URL || DEFAULT
 
   const pages = [];
   for (const code of LANGS) {
-    const html = renderPage(template, code, locales, site);
+    const html = renderPage(template, code, locales, site, logoSvg);
     const rel = path.join(dirFor(code), 'index.html');
     fs.mkdirSync(path.join(outDir, dirFor(code)), { recursive: true });
     fs.writeFileSync(path.join(outDir, rel), html);
@@ -271,6 +306,10 @@ function build({ outDir = DEFAULT_OUT, siteUrl = process.env.SITE_URL || DEFAULT
   }
 
   fs.copyFileSync(path.join(SRC, 'styles.css'), path.join(outDir, 'styles.css'));
+  fs.copyFileSync(LOGO, path.join(outDir, 'logo.svg'));
+  for (const file of STATIC_FILES) fs.copyFileSync(path.join(SRC, file), path.join(outDir, file));
+  copyDir(path.join(SRC, 'og'), path.join(outDir, 'og'));
+  copyDir(path.join(SRC, 'fonts'), path.join(outDir, 'fonts'));
   copyDir(path.join(SRC, 'js'), path.join(outDir, 'js'));
   fs.writeFileSync(path.join(outDir, 'sitemap.xml'), buildSitemap(site));
   fs.writeFileSync(path.join(outDir, 'robots.txt'), buildRobots(site));
