@@ -6,16 +6,17 @@ const i18n = require('../i18n.js');
 const en = require('../i18n/en.js');
 const ru = require('../i18n/ru.js');
 const de = require('../i18n/de.js');
+const sk = require('../i18n/sk.js');
 const { EMBEDDING_WORDS } = require('../embeddings.js');
 const { LEARNING_CANDIDATES } = require('../learn.js');
 
-const LOCALES = { en, ru, de };
+const LOCALES = { en, ru, de, sk };
 
 const placeholders = (text) => [...text.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
 
 test('словари: у всех языков одинаковый набор ключей', () => {
   const enKeys = Object.keys(en.text).sort();
-  for (const code of ['ru', 'de']) {
+  for (const code of ['ru', 'de', 'sk']) {
     const keys = Object.keys(LOCALES[code].text).sort();
     assert.deepStrictEqual(keys, enKeys, `ключи языка ${code} расходятся с английским`);
   }
@@ -24,7 +25,7 @@ test('словари: у всех языков одинаковый набор �
 test('словари: плейсхолдеры {…} совпадают с английским в каждом ключе', () => {
   for (const key of Object.keys(en.text)) {
     const expected = placeholders(en.text[key]);
-    for (const code of ['ru', 'de']) {
+    for (const code of ['ru', 'de', 'sk']) {
       assert.deepStrictEqual(placeholders(LOCALES[code].text[key]), expected, `${code}: ${key}`);
     }
   }

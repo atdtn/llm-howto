@@ -28,22 +28,23 @@ People who use language models every day and want an intuitive picture of what i
 
 ## Languages
 
-The site is available in three languages, each on its own address:
+The site is available in four languages, each on its own address:
 
 | Language | Address |
 |----------|---------|
 | English (default) | `/` |
+| Slovenčina | `/sk/` |
 | Русский | `/ru/` |
 | Deutsch | `/de/` |
 
 The language switcher at the top of the page moves between them. Every language has its own text and its own small built-in corpus, so the demos work with words that are natural in that language — German, for example, has its own tales, its own word map and its own umlauts.
 
-Pages do not redirect based on the browser language. Each address always shows the same language, which is what search engines and shared links need.
+Only the root address `/` looks at the browser language: on the first visit it sends a reader whose browser prefers Slovak, Russian or German (Czech counts as Slovak) to that page, before anything is drawn. A language picked in the switcher is remembered and wins over the browser. Every other address always shows the same language, which is what search engines and shared links need.
 
 ### How translations are organised
 
 - `src/index.html` holds the page structure. Text is marked with `data-i18n` attributes that name a key.
-- `src/js/i18n/en.js`, `ru.js` and `de.js` are the dictionaries: page text, demo strings, example data and the corpus for each language.
+- `src/js/i18n/en.js`, `ru.js`, `de.js` and `sk.js` are the dictionaries: page text, demo strings, example data and the corpus for each language.
 - `scripts/build.js` renders one static page per language: it fills in the translated text, so the content is in the HTML itself, not added by JavaScript.
 - `src/js/i18n.js` is the small translator the demos use in the browser; it takes the language from the page's `data-lang` attribute.
 - `src/js/tests/i18n.test.js` checks that all languages have the same keys and placeholders, so a missing translation fails the tests instead of silently showing English.
@@ -57,7 +58,7 @@ Each language has its own page, so search engines can index all of them:
 - **Static HTML per language** — the translated text is in the markup; crawlers do not need to run JavaScript.
 - **`<html lang>`** set to the page language.
 - **`rel="canonical"`** on every page.
-- **`hreflang` alternates** for `en`, `ru` and `de`, plus `x-default` pointing to the English page.
+- **`hreflang` alternates** for `en`, `ru`, `de` and `sk`, plus `x-default` pointing to the English page.
 - **`sitemap.xml`** listing all language pages with their alternates, and **`robots.txt`** pointing to it.
 - **Open Graph and Twitter tags** with the translated title and description, and **JSON-LD** (`WebSite` and `WebPage` with `inLanguage`).
 
@@ -113,7 +114,7 @@ src/js/theme.js         Appearance settings: mode (auto/light/dark) and palette,
 src/js/nav.js           Header: section menu, current-section highlight, reading progress
 src/og/, src/*.png      Social preview images and icons, drawn by scripts/render-images.js
 src/fonts/              Onest font for the site name (OFL license), self-hosted
-src/js/i18n/*.js        Dictionaries: en (source), ru, de — page text, demo data, corpus
+src/js/i18n/*.js        Dictionaries: en (source), ru, de, sk — page text, demo data, corpus
 src/js/i18n.js          Translator for the demos (language from the page)
 src/js/model.js         Tokenizer and n-gram model: counts, predictions, temperature, sampling
 src/js/generation.js    Step-by-step text generation state machine

@@ -133,6 +133,10 @@
     if (langMenu) {
       langMenu.querySelectorAll('a[hreflang]').forEach((link) => {
         link.addEventListener('click', () => {
+          /* Выбор в меню важнее языка браузера: корень сайта больше не перенаправит. */
+          try {
+            global.localStorage.setItem('llm-howto.lang', link.getAttribute('hreflang'));
+          } catch (error) {}
           /* Текущий раздел по прокрутке точнее, чем #якорь в адресе: его могло и не быть. */
           const section = current >= 0 ? links[current].hash : '';
           link.href = withHash(link.getAttribute('href'), section);

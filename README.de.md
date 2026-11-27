@@ -28,22 +28,23 @@ Für alle, die Sprachmodelle täglich nutzen und eine anschauliche Vorstellung d
 
 ## Sprachen
 
-Die Seite gibt es in drei Sprachen, jede unter einer eigenen Adresse:
+Die Seite gibt es in vier Sprachen, jede unter einer eigenen Adresse:
 
 | Sprache | Adresse |
 |---------|---------|
 | English (Standard) | `/` |
+| Slovenčina | `/sk/` |
 | Русский | `/ru/` |
 | Deutsch | `/de/` |
 
 Der Umschalter oben auf der Seite wechselt zwischen ihnen. Jede Sprache hat ihren eigenen Text und ihr eigenes eingebautes Korpus, sodass die Demos mit Wörtern arbeiten, die in dieser Sprache natürlich sind. Die deutsche Fassung hat zum Beispiel eigene Märchen, eine eigene Wortkarte und ihre eigenen Umlaute.
 
-Die Seiten leiten nicht anhand der Browsersprache um: Jede Adresse zeigt immer dieselbe Sprache, so wie es Suchmaschinen und geteilte Links brauchen.
+Nur die Startadresse `/` beachtet die Browsersprache: Beim ersten Besuch landet, wessen Browser Slowakisch, Russisch oder Deutsch bevorzugt (Tschechisch zählt als Slowakisch), noch vor dem Zeichnen auf der passenden Seite. Eine im Umschalter gewählte Sprache wird gespeichert und hat Vorrang vor dem Browser. Alle anderen Adressen zeigen immer dieselbe Sprache, so wie es Suchmaschinen und geteilte Links brauchen.
 
 ### So sind die Übersetzungen aufgebaut
 
 - `src/index.html` enthält den Aufbau der Seite. Texte sind mit `data-i18n`-Attributen markiert, die einen Schlüssel nennen.
-- `src/js/i18n/en.js`, `ru.js` und `de.js` sind die Wörterbücher: Seitentexte, Demo-Texte, Beispieldaten und das Korpus jeder Sprache.
+- `src/js/i18n/en.js`, `ru.js`, `de.js` und `sk.js` sind die Wörterbücher: Seitentexte, Demo-Texte, Beispieldaten und das Korpus jeder Sprache.
 - `scripts/build.js` erzeugt für jede Sprache eine statische Seite: Er setzt den übersetzten Text ein, sodass der Inhalt im HTML steht und nicht erst von JavaScript ergänzt wird.
 - `src/js/i18n.js` ist der kleine Übersetzer, den die Demos im Browser nutzen; die Sprache liest er aus dem Attribut `data-lang` der Seite.
 - `src/js/tests/i18n.test.js` prüft, dass alle Sprachen dieselben Schlüssel und Platzhalter haben. Eine fehlende Übersetzung lässt die Tests scheitern, statt still Englisch anzuzeigen.
@@ -52,12 +53,12 @@ Um eine Sprache hinzuzufügen, kopiere `src/js/i18n/en.js` nach `src/js/i18n/<Co
 
 ## Suchmaschinenoptimierung (SEO)
 
-Jede Sprache hat eine eigene Seite, sodass Suchmaschinen alle drei indexieren können:
+Jede Sprache hat eine eigene Seite, sodass Suchmaschinen alle vier indexieren können:
 
 - **Statisches HTML pro Sprache** — der übersetzte Text steht im Markup; Crawler müssen kein JavaScript ausführen.
 - **`<html lang>`** mit der Sprache der Seite.
 - **`rel="canonical"`** auf jeder Seite.
-- **`hreflang`-Alternativen** für `en`, `ru` und `de`, dazu `x-default` für die englische Seite.
+- **`hreflang`-Alternativen** für `en`, `ru`, `de` und `sk`, dazu `x-default` für die englische Seite.
 - **`sitemap.xml`** mit allen Sprachseiten und ihren Alternativen sowie **`robots.txt`** mit Verweis darauf.
 - **Open-Graph- und Twitter-Tags** mit dem übersetzten Titel und der Beschreibung sowie **JSON-LD** (`WebSite` und `WebPage` mit `inLanguage`).
 
@@ -113,7 +114,7 @@ src/js/theme.js         Darstellung: Modus (auto/hell/dunkel) und Farbpalette, w
 src/js/nav.js           Kopfzeile: Abschnittsmenü, aktueller Abschnitt, Lesefortschritt
 src/og/, src/*.png      Vorschaubilder für soziale Netzwerke und Icons, erzeugt von scripts/render-images.js
 src/fonts/              Schrift Onest für den Seitennamen (OFL-Lizenz), lokal eingebunden
-src/js/i18n/*.js        Wörterbücher: en (Quelle), ru, de — Seitentexte, Demo-Daten, Korpus
+src/js/i18n/*.js        Wörterbücher: en (Quelle), ru, de, sk — Seitentexte, Demo-Daten, Korpus
 src/js/i18n.js          Übersetzer für die Demos (Sprache von der Seite)
 src/js/model.js         Tokenizer und n-Gramm-Modell: Zählung, Vorhersagen, Temperatur, Auswahl
 src/js/generation.js    Schrittweise Textgenerierung

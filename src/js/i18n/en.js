@@ -322,6 +322,7 @@ Who lives in the little house? I am the mouse, I am the frog, and who are you? I
 Come and live with us. They live there as three. A little fox comes. They live there as four.
 A little wolf comes running. They live there as five. A clumsy bear comes along.
 The bear climbs onto the little house and crushes it.
+Hey diddle diddle, the cat and the fiddle, the cow jumped over the moon. The little dog laughed to see such fun, and the dish ran away with the spoon.
 
 The sun shines brightly. It is raining on the street. The children play in the yard. In the forest
 tall trees grow. Birds sing songs. Clouds float in the sky. In the evening it becomes cool.

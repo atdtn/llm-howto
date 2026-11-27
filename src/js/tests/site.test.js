@@ -10,9 +10,10 @@ const { createTranslator } = require('../i18n.js');
 const en = require('../i18n/en.js');
 const ru = require('../i18n/ru.js');
 const de = require('../i18n/de.js');
+const sk = require('../i18n/sk.js');
 
 const SITE = 'https://example.org/llm-howto/';
-const LOCALES = { en, ru, de };
+const LOCALES = { en, ru, de, sk };
 
 /* Сборка один раз на все тесты: она создаёт каталог во временной папке. */
 const OUT = fs.mkdtempSync(path.join(os.tmpdir(), 'llm-howto-site-'));
@@ -24,6 +25,7 @@ test('сборка: страница на каждом языке, корень 
   assert.ok(fs.existsSync(path.join(OUT, 'index.html')));
   assert.ok(fs.existsSync(path.join(OUT, 'ru', 'index.html')));
   assert.ok(fs.existsSync(path.join(OUT, 'de', 'index.html')));
+  assert.ok(fs.existsSync(path.join(OUT, 'sk', 'index.html')));
   assert.ok(fs.existsSync(path.join(OUT, 'sitemap.xml')));
   assert.ok(fs.existsSync(path.join(OUT, 'robots.txt')));
   assert.ok(fs.existsSync(path.join(OUT, 'styles.css')));
@@ -32,7 +34,7 @@ test('сборка: страница на каждом языке, корень 
 });
 
 test('страницы: язык, заголовок и описание переведены в HTML', () => {
-  const expected = { en: 'index.html', ru: 'ru/index.html', de: 'de/index.html' };
+  const expected = { en: 'index.html', ru: 'ru/index.html', de: 'de/index.html', sk: 'sk/index.html' };
   for (const code of LANGS) {
     const html = read(expected[code]);
     const t = createTranslator(LOCALES, code).t;
@@ -47,7 +49,7 @@ test('страницы: язык, заголовок и описание пер�
 });
 
 test('страницы: canonical, hreflang для всех языков и x-default', () => {
-  const pages = { en: '', ru: 'ru/', de: 'de/' };
+  const pages = { en: '', ru: 'ru/', de: 'de/', sk: 'sk/' };
   for (const code of LANGS) {
     const html = read(path.join(pages[code], 'index.html'));
     assert.ok(html.includes(`<link rel="canonical" href="${SITE}${pages[code]}">`), `${code}: canonical`);
@@ -85,7 +87,7 @@ test('страницы: переключатель языка ведёт на д
 });
 
 test('страницы: логотип, иконка сайта и переключатель темы', () => {
-  for (const [rel, prefix] of [['index.html', ''], ['ru/index.html', '../'], ['de/index.html', '../']]) {
+  for (const [rel, prefix] of [['index.html', ''], ['ru/index.html', '../'], ['de/index.html', '../'], ['sk/index.html', '../']]) {
     const html = read(rel);
     assert.match(html, /<svg class="brand-mark" role="img" aria-label="[^"]+"/, `${rel}: логотип`);
     assert.ok(html.includes(`<link rel="icon" href="${prefix}logo.svg" type="image/svg+xml">`), `${rel}: иконка`);
@@ -112,10 +114,10 @@ test('страницы: пути к стилям и скриптам ведут 
 
 test('sitemap: все языковые страницы с альтернативами', () => {
   const xml = read('sitemap.xml');
-  for (const loc of [SITE, SITE + 'ru/', SITE + 'de/']) {
+  for (const loc of [SITE, SITE + 'ru/', SITE + 'de/', SITE + 'sk/']) {
     assert.ok(xml.includes(`<loc>${loc}</loc>`), 'в sitemap есть ' + loc);
   }
-  assert.strictEqual((xml.match(/hreflang="x-default"/g) || []).length, 3);
+  assert.strictEqual((xml.match(/hreflang="x-default"/g) || []).length, LANGS.length);
 });
 
 test('robots.txt: разрешает всё и указывает sitemap', () => {
@@ -145,7 +147,7 @@ test('translateMarkup: ошибка, если закрывающий тег не
 });
 
 test('страницы: шапка с меню разделов, меню языков и скриптом навигации', () => {
-  const pages = { en: '', ru: 'ru/', de: 'de/' };
+  const pages = { en: '', ru: 'ru/', de: 'de/', sk: 'sk/' };
   for (const code of LANGS) {
     const prefix = pages[code] ? '../' : '';
     const html = read(path.join(pages[code], 'index.html'));
@@ -160,7 +162,7 @@ test('страницы: шапка с меню разделов, меню язы
 });
 
 test('страницы: картинка для соцсетей на языке страницы', () => {
-  const pages = { en: '', ru: 'ru/', de: 'de/' };
+  const pages = { en: '', ru: 'ru/', de: 'de/', sk: 'sk/' };
   for (const code of LANGS) {
     const html = read(path.join(pages[code], 'index.html'));
     const image = `${SITE}og/og-${code}.png`;
@@ -198,7 +200,7 @@ test('стили: плавная прокрутка не включена с с�
 });
 
 test('страницы: доступность разметки (skip-link, <main>, <output> вне <label>, имя кнопок)', () => {
-  const pages = { en: '', ru: 'ru/', de: 'de/' };
+  const pages = { en: '', ru: 'ru/', de: 'de/', sk: 'sk/' };
   for (const code of LANGS) {
     const html = read(path.join(pages[code], 'index.html'));
     assert.match(html, /<body id="top">\s*<a class="skip-link" href="#main">/, `${code}: ссылка «К содержанию» первой`);
@@ -216,4 +218,30 @@ test('страницы: доступность разметки (skip-link, <mai
 test('стили: системная подсветка нажатия на телефоне отключена для всей страницы', () => {
   const css = fs.readFileSync(path.join(__dirname, '..', '..', 'styles.css'), 'utf8');
   assert.ok(css.includes('html { -webkit-tap-highlight-color: transparent; }'));
+});
+
+test('порядок языков: английский, словацкий, русский, немецкий — так и в меню', () => {
+  assert.deepStrictEqual(LANGS, ['en', 'sk', 'ru', 'de']);
+  const codes = [...read('index.html').matchAll(/data-lang-option="(\w+)"/g)].map((m) => m[1]);
+  assert.deepStrictEqual(codes, LANGS);
+});
+
+test('язык браузера: сохранённый выбор, затем языки браузера по порядку, затем основной', () => {
+  const { preferredLang } = require('../../../scripts/build.js');
+  const pick = (saved, browser) => preferredLang(saved, browser, LANGS, { cs: 'sk' });
+  assert.strictEqual(pick(null, ['de-AT', 'en']), 'de');
+  assert.strictEqual(pick(null, ['fr-FR', 'ru']), 'ru', 'незнакомый язык пропускается');
+  assert.strictEqual(pick(null, ['cs-CZ']), 'sk', 'чешский — на словацкую');
+  assert.strictEqual(pick(null, ['en-US', 'ru']), 'en');
+  assert.strictEqual(pick(null, ['ja']), 'en');
+  assert.strictEqual(pick(null, []), 'en');
+  assert.strictEqual(pick('en', ['ru-RU']), 'en', 'выбор в меню важнее браузера');
+  assert.strictEqual(pick('xx', ['ru-RU']), 'ru', 'мусор в хранилище не мешает');
+});
+
+test('перенаправление по языку браузера — только на корне сайта', () => {
+  assert.ok(read('index.html').includes('location.replace('), 'корень перенаправляет');
+  for (const code of LANGS.slice(1)) {
+    assert.ok(!read(`${code}/index.html`).includes('location.replace('), `${code}: без перенаправления`);
+  }
 });

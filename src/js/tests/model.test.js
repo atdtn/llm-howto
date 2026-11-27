@@ -155,7 +155,7 @@ const LLM = require("../model.js");
 
 const fs = require('fs');
 const path = require('path');
-const DEMO_LOCALES = ['en', 'ru', 'de'].map((code) => {
+const DEMO_LOCALES = ['en', 'ru', 'de', 'sk'].map((code) => {
   const locale = require(`../i18n/${code}.js`);
   return { code, text: locale.text, model: LLM.buildModel(LLM.tokenize(locale.corpus)) };
 });

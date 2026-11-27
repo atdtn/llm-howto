@@ -10,6 +10,7 @@
  * Для каждого языка создаётся отдельная страница с готовым переведённым текстом,
  * так поисковики видят контент на всех языках без выполнения JavaScript:
  *   dist/index.html      — английский (x-default)
+ *   dist/sk/index.html   — словацкий
  *   dist/ru/index.html   — русский
  *   dist/de/index.html   — немецкий
  * На каждой странице: canonical, hreflang для всех языков, Open Graph,
@@ -31,9 +32,9 @@ const STATIC_FILES = ['favicon-32.png', 'apple-touch-icon.png'];
 const DEFAULT_SITE_URL = 'https://atdtn.github.io/llm-howto/';
 const REPO_URL = 'https://github.com/atdtn/llm-howto';
 /** Первый язык — основной; он же получает корень сайта и x-default. */
-const LANGS = ['en', 'ru', 'de'];
+const LANGS = ['en', 'sk', 'ru', 'de'];
 const DEFAULT_LANG = LANGS[0];
-const OG_LOCALE = { en: 'en_US', ru: 'ru_RU', de: 'de_DE' };
+const OG_LOCALE = { en: 'en_US', ru: 'ru_RU', de: 'de_DE', sk: 'sk_SK' };
 const VOID_TAGS = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr']);
 
 const i18n = require(path.join(SRC, 'js', 'i18n.js'));
@@ -126,7 +127,7 @@ function translateMarkup(html, t) {
  * между языковыми страницами (их видят поисковики).
  */
 function languageSwitcher(code, t) {
-  const NAMES = { en: 'English', ru: 'Русский', de: 'Deutsch' };
+  const NAMES = { en: 'English', ru: 'Русский', de: 'Deutsch', sk: 'Slovenčina' };
   const links = LANGS.map((other) => {
     const current = other === code;
     const cls = current ? ' class="is-current"' : '';
@@ -209,6 +210,49 @@ function seoHead(code, tr, siteUrl) {
   ].join('\n');
 }
 
+/** Ключ localStorage, где запоминается язык, выбранный в меню языков (см. js/nav.js). */
+const LANG_STORAGE_KEY = 'llm-howto.lang';
+/** Близкие языки: чешский читатель скорее поймёт словацкую страницу, чем английскую. */
+const LANG_ALIASES = { cs: 'sk' };
+
+/**
+ * Язык для посетителя корня сайта: сохранённый выбор, иначе первый подходящий
+ * из языков браузера («de-AT» → «de»), иначе основной.
+ * Функция встраивается в страницу как есть, поэтому написана на ES5.
+ */
+function preferredLang(saved, browserLangs, langs, aliases) {
+  if (saved && langs.indexOf(saved) >= 0) return saved;
+  for (var i = 0; i < browserLangs.length; i++) {
+    var base = String(browserLangs[i] || '').toLowerCase().split('-')[0];
+    if (aliases[base]) base = aliases[base];
+    if (langs.indexOf(base) >= 0) return base;
+  }
+  return langs[0];
+}
+
+/**
+ * Только для корня сайта (основной язык): до первой отрисовки переходим на страницу
+ * языка браузера. Остальные адреса всегда показывают свой язык — для ссылок и поисковиков.
+ */
+function langRedirectScript() {
+  return [
+    '  <script>',
+    '    /* Язык браузера или выбранный раньше: переходим на свою страницу до отрисовки. */',
+    '    try {',
+    '      var savedLang = null;',
+    `      try { savedLang = localStorage.getItem(${JSON.stringify(LANG_STORAGE_KEY)}); } catch (error) {}`,
+    `      var lang = (${preferredLang.toString()})(`,
+    '        savedLang,',
+    '        navigator.languages || [navigator.language],',
+    `        ${JSON.stringify(LANGS)},`,
+    `        ${JSON.stringify(LANG_ALIASES)}`,
+    '      );',
+    `      if (lang !== ${JSON.stringify(DEFAULT_LANG)}) location.replace(lang + '/' + location.search + location.hash);`,
+    '    } catch (error) {}',
+    '  </script>',
+  ].join('\n');
+}
+
 /** Скрипты словарей: язык страницы и английский как запасной. */
 function localeScripts(code, prefix) {
   const codes = code === DEFAULT_LANG ? [code] : [code, DEFAULT_LANG];
@@ -233,6 +277,7 @@ function renderPage(template, code, locales, siteUrl, logoSvg) {
   html = html.replace(/href="(logo\.svg|favicon-32\.png|apple-touch-icon\.png)"/g, `href="${prefix}$1"`);
   html = html.replace(/src="js\//g, `src="${prefix}js/`);
   html = html.replace('<!-- locale-scripts -->', localeScripts(code, prefix));
+  html = html.replace('  <!-- lang-redirect -->\n', code === DEFAULT_LANG ? langRedirectScript() + '\n' : '');
   html = html.replace('<!-- logo -->', logoMarkup(logoSvg, tr.t));
   html = html.replace('<!-- language-switcher -->', languageSwitcher(code, tr.t));
   html = translateMarkup(html, tr.t);
@@ -318,7 +363,7 @@ function build({ outDir = DEFAULT_OUT, siteUrl = process.env.SITE_URL || DEFAULT
   return pages;
 }
 
-module.exports = { build, relHref, dirFor, translateMarkup, LANGS, DEFAULT_SITE_URL, REPO_URL };
+module.exports = { build, relHref, dirFor, translateMarkup, preferredLang, LANGS, LANG_STORAGE_KEY, DEFAULT_SITE_URL, REPO_URL };
 
 if (require.main === module) {
   const pages = build();

@@ -324,6 +324,8 @@ Wer wohnt im Häuschen? Ich bin das Mäuschen, ich bin der Frosch, und wer bist 
 Komm zu uns wohnen. Sie wohnen nun zu dritt. Da kommt ein Füchslein. Sie wohnen nun zu viert.
 Da angelt ein Wölfchen herbei. Sie wohnen nun zu fünft. Da kommt ein ungeschickter Bär.
 Der Bär klettert auf das Häuschen und zerquetscht es.
+Dunkel war’s, der Mond schien helle, schneebedeckt die grüne Flur, als ein Wagen blitzesschnelle langsam um die Ecke fuhr.
+Drinnen saßen stehend Leute, schweigend ins Gespräch vertieft, als ein totgeschossner Hase auf der Sandbank Schlittschuh lief.
 
 Die Sonne scheint hell. Auf der Straße regnet es. Die Kinder spielen im Hof. Im Wald wachsen hohe Bäume.
 Die Vögel singen Lieder. Am Himmel ziehen Wolken. Am Abend wird es kühl. Mama liest ein Buch.
