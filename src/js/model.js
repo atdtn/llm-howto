@@ -48,21 +48,44 @@
     return (h >>> 0) % 100000;
   }
 
+  /**
+   * Ключ для сравнения слов: «ё» и «е» — одна буква. На клавиатуре телефона «ё» часто
+   * спрятана, и «поливал ее» должно находить «поливал её». Показываются слова
+   * в том написании, что в тексте (см. model.display).
+   */
+  function matchKey(token) {
+    return String(token).replace(/ё/g, 'е');
+  }
+
   function inc(map, key) {
     map.set(key, (map.get(key) || 0) + 1);
   }
 
-  /** Модель: частоты одиночных слов, пар и троек. */
-  function buildModel(tokens) {
+  /**
+   * Модель: частоты одиночных слов, пар и троек. Счёт идёт по ключам matchKey,
+   * а display хранит для ключа самое частое написание из текста («её», а не «ее»).
+   */
+  function buildModel(rawTokens) {
     const uni = new Map();
     const bi = new Map();
     const tri = new Map();
+    const spellings = new Map();
+    const tokens = rawTokens.map((raw) => {
+      const key = matchKey(raw);
+      if (!spellings.has(key)) spellings.set(key, new Map());
+      inc(spellings.get(key), raw);
+      return key;
+    });
     for (let i = 0; i < tokens.length; i++) {
       inc(uni, tokens[i]);
       if (i >= 1) inc(bi, tokens[i - 1] + ' ' + tokens[i]);
       if (i >= 2) inc(tri, tokens[i - 2] + ' ' + tokens[i - 1] + ' ' + tokens[i]);
     }
-    return { uni, bi, tri, total: tokens.length };
+    const display = new Map();
+    for (const [key, forms] of spellings) {
+      display.set(key, [...forms].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0][0]);
+    }
+    return { uni, bi, tri, display, total: tokens.length };
   }
 
   /**
@@ -89,7 +112,8 @@
    * что контекст модели незнаком.
    */
   function predictNext(model, context) {
-    const tokens = Array.isArray(context) ? context.map(String) : tokenize(context);
+    const raw = Array.isArray(context) ? context.map(String) : tokenize(context);
+    const tokens = raw.map(matchKey);
     if (!model || !model.total) return { items: [], source: 'none' };
 
     let items = [];
@@ -108,6 +132,9 @@
     if (!items.length) {
       items = distributionFromCounts(model.uni, '');
       if (items.length) source = 'unigram';
+    }
+    if (model.display) {
+      items = items.map((item) => ({ token: model.display.get(item.token) || item.token, p: item.p }));
     }
     return { items, source };
   }
@@ -175,6 +202,7 @@
 
   const api = {
     mulberry32,
+    matchKey,
     tokenize,
     tokenizeForDisplay,
     tokenId,

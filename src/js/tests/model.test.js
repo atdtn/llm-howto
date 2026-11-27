@@ -221,3 +221,18 @@ test('готовые начала фраз: в 01 — от трёх вариан
     tokenExamples.forEach((ex) => assert.ok(ex.label && LLM.tokenizeForDisplay(ex.text).length > 0, `${code}: «${ex.label}»`));
   }
 });
+
+test('е и ё: модель их не различает, а показывает слово как в тексте', () => {
+  const model = LLM.buildModel(LLM.tokenize('Колобок ушёл от зайца. Колобок ушёл далеко.'));
+  assert.strictEqual(LLM.matchKey('ушёл'), 'ушел');
+  const typedWithE = LLM.predictNext(model, 'колобок ушел');
+  assert.strictEqual(typedWithE.source, 'trigram');
+  assert.deepStrictEqual(typedWithE.items.map((i) => i.token).sort(), ['далеко', 'от']);
+  assert.deepStrictEqual(LLM.predictNext(model, 'колобок').items.map((i) => i.token), ['ушёл'], 'подсказка с «ё»');
+});
+
+test('е и ё: на настоящем русском тексте ввод без «ё» находит продолжение', () => {
+  const ru = DEMO_LOCALES.find((l) => l.code === 'ru');
+  assert.strictEqual(LLM.predictNext(ru.model, 'дедушки ушел').items[0].token, 'я');
+  assert.strictEqual(LLM.predictNext(ru.model, 'я от дедушки').items[0].token, 'ушёл');
+});
