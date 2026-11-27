@@ -201,3 +201,23 @@ test('mulberry32: одинаковое зерно — одинаковый ря�
     assert.ok(x >= 0 && x < 1);
   }
 });
+
+test('готовые начала фраз: в 01 — от трёх вариантов, в 05 — от двух; примеры токенов на месте', () => {
+  for (const { code, text } of DEMO_LOCALES) {
+    const locale = require(`../i18n/${code}.js`);
+    const model = DEMO_LOCALES.find((l) => l.code === code).model;
+    const { predictStarts, generateStarts, tokenExamples } = locale.data;
+    assert.ok(predictStarts.length >= 3 && generateStarts.length >= 3, `${code}: хотя бы три начала`);
+    assert.strictEqual(predictStarts[0], text['predict.defaultInput'], `${code}: первое начало в 01 — фраза по умолчанию`);
+    assert.strictEqual(generateStarts[0], text['generate.defaultInput'], `${code}: первое начало в 05 — фраза по умолчанию`);
+    for (const start of predictStarts) {
+      assert.ok(LLM.predictNext(model, start).items.length >= 3, `${code} 01: «${start}»`);
+    }
+    for (const start of generateStarts) {
+      assert.ok(LLM.predictNext(model, start).items.length >= 2, `${code} 05: «${start}»`);
+    }
+    assert.strictEqual(tokenExamples.length, 5, `${code}: пять примеров текста`);
+    assert.strictEqual(tokenExamples[0].text, text['tokens.defaultText'], `${code}: первый пример — текст по умолчанию`);
+    tokenExamples.forEach((ex) => assert.ok(ex.label && LLM.tokenizeForDisplay(ex.text).length > 0, `${code}: «${ex.label}»`));
+  }
+});

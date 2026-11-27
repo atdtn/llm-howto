@@ -53,11 +53,16 @@
       'toc.inside': 'Innenleben',
       'toc.finale': 'Fazit',
 
+      'demo.startsLabel': 'Anfangen mit:',
+      'tokens.examplesLabel': 'Beispiele:',
+      'predict.back': 'Wort entfernen',
+      'predict.clear': 'Von vorn',
+      'predict.addPrefix': 'Wort hinzufügen',
       'predict.title': 'Das Modell errät das nächste Wort',
       'predict.p1':
         'Ein Sprachmodell ist ein Programm, das Text liest und vorhersagt, welches Wort als Nächstes kommt. Wenn dein Handy dir das nächste Wort vorschlägt, hast du ein solches Modell schon bei der Arbeit gesehen. Ein großes Modell macht dasselbe, hat aber so viel Text gelesen, dass seine Vermutungen viel besser sind.',
       'predict.p2':
-        'Probier es aus: Fang einen Satz an — darunter erscheinen die Wörter, die das Modell für wahrscheinlich hält. Die Balken zeigen die Wahrscheinlichkeit: Je länger der Balken, desto sicherer ist das Modell.',
+        'Probier es aus: Fang einen Satz an oder tippe auf einen fertigen Anfang — darunter erscheinen die Wörter, die das Modell für wahrscheinlich hält. Tippe auf ein Wort, um es an den Satz anzuhängen. Die Balken zeigen die Wahrscheinlichkeit: Je länger der Balken, desto sicherer ist das Modell.',
       'predict.inputLabel': 'Fang einen Satz an',
       'predict.defaultInput': 'der Lebkuchenmann',
       'predict.bridge': 'Zuerst muss der Text aber in Zahlen verwandelt werden — dazu kommen wir gleich.',
@@ -250,6 +255,16 @@
         apelsin: 'Orange',
         banan: 'Banane',
       },
+      /* Готовые начала фраз и примеры текстов: удобно на телефоне, без клавиатуры. */
+      predictStarts: ['der Lebkuchenmann', 'Opa', 'die Katze', 'Oma'],
+      generateStarts: ['die Katze', 'Opa', 'der Fuchs', 'der Bär'],
+      tokenExamples: [
+        { label: 'Satz', text: 'Hallo, Welt! Sprachmodelle lesen Texte in kleinen Stücken.' },
+        { label: 'Satzzeichen', text: 'Moment... was?! Echt?!' },
+        { label: 'Zahlen', text: 'Am 27.11.2026 um 9:30 habe ich 15 Euro bezahlt.' },
+        { label: 'Bindestriche', text: 'Ein E-Mail-Programm für Open-Source-Fans.' },
+        { label: 'Emoji', text: 'Ich liebe Pizza 🍕 und Katzen 🐱!' },
+      ],
       attentionWords: ['Der Kater', 'der', 'auf dem Fensterbrett', 'saß', 'stieß', 'die Blume', 'um'],
       attentionNames: ['der Kater', 'der', 'auf dem Fensterbrett', 'saß', 'stieß', 'die Blume', 'um'],
       attentionCommaAfter: [0, 3],

@@ -1,21 +1,55 @@
 'use strict';
 
-/* 01. Угадай следующее слово: полоски вероятностей. */
+/*
+ * 01. Угадай следующее слово: полоски вероятностей.
+ * Фразу можно напечатать, а можно собрать без клавиатуры: готовое начало
+ * и нажатия на предложенные слова — как подсказки над клавиатурой телефона.
+ */
 (function () {
   window.Demos = window.Demos || {};
 
   window.Demos.predict = {
     init(model) {
-      const { t } = window.LLM_I18N;
+      const { t, locale } = window.LLM_I18N;
+      const UI = window.DemoUI;
       const input = document.getElementById('predict-input');
       const out = document.getElementById('predict-out');
       const note = document.getElementById('predict-note');
       if (!input || !out || !note) return;
 
-      const render = () => {
+      /* Добавить слово в конец фразы / убрать последнее слово. */
+      const appendWord = (text, word) => (text.trim() ? text.trimEnd() + ' ' : '') + word;
+      const dropWord = (text) => text.trimEnd().replace(/\s*\S+$/, '');
+
+      const setPhrase = (text) => {
+        input.value = text;
+        render();
+      };
+
+      const starts = UI.chipRow(t('demo.startsLabel'), locale.data.predictStarts || [], setPhrase);
+      input.insertAdjacentElement('afterend', starts);
+
+      const actions = document.createElement('div');
+      actions.className = 'phrase-actions';
+      const backBtn = document.createElement('button');
+      backBtn.type = 'button';
+      backBtn.className = 'btn btn-ghost btn-small';
+      backBtn.textContent = '⌫ ' + t('predict.back');
+      backBtn.addEventListener('click', () => setPhrase(dropWord(input.value)));
+      const clearBtn = document.createElement('button');
+      clearBtn.type = 'button';
+      clearBtn.className = 'btn btn-ghost btn-small';
+      clearBtn.textContent = t('predict.clear');
+      clearBtn.addEventListener('click', () => setPhrase(''));
+      actions.append(backBtn, clearBtn);
+      out.insertAdjacentElement('afterend', actions);
+
+      function render() {
         const typedTokens = window.LLM.tokenize(input.value);
         const { items, source } = window.LLM.predictNext(model, input.value);
         out.textContent = '';
+        starts.current(input.value);
+        backBtn.disabled = clearBtn.disabled = !input.value.trim();
 
         if (!items.length) {
           note.textContent = t('predict.empty');
@@ -26,8 +60,15 @@
         const best = top[0].p;
 
         top.forEach((item) => {
-          const row = document.createElement('div');
+          /* Строка — кнопка: нажатие добавляет слово к фразе. */
+          const row = document.createElement('button');
+          row.type = 'button';
           row.className = 'pred-row';
+          row.addEventListener('click', () => setPhrase(appendWord(input.value, item.token)));
+
+          const hint = document.createElement('span');
+          hint.className = 'visually-hidden';
+          hint.textContent = t('predict.addPrefix') + ' ';
 
           const token = document.createElement('span');
           token.className = 'pred-token';
@@ -44,7 +85,7 @@
           pct.className = 'pred-pct';
           pct.textContent = (item.p * 100).toFixed(0) + '%';
 
-          row.append(token, track, pct);
+          row.append(hint, token, track, pct);
           out.appendChild(row);
         });
 
@@ -61,9 +102,10 @@
         } else {
           note.textContent = t('predict.fallback');
         }
-      };
+      }
 
       input.addEventListener('input', render);
+      UI.touchFriendlyInput(input);
       render();
     },
   };

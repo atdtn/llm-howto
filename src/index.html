@@ -112,7 +112,7 @@
 
         <div class="demo" id="demo-predict">
           <label class="field-label" for="predict-input" data-i18n="predict.inputLabel">Start a phrase</label>
-          <input id="predict-input" class="text-input" value="in the" data-i18n-value="predict.defaultInput" autocomplete="off" spellcheck="false">
+          <input id="predict-input" class="text-input" value="in the" data-i18n-value="predict.defaultInput" autocomplete="off" autocapitalize="none" autocorrect="off" enterkeyhint="done" spellcheck="false">
           <div class="predict-out" id="predict-out" aria-live="polite"></div>
           <p class="demo-note" id="predict-note"></p>
         </div>
@@ -128,7 +128,7 @@
 
         <div class="demo">
           <label class="field-label" for="tokens-input" data-i18n="tokens.inputLabel">Text</label>
-          <textarea id="tokens-input" class="text-input" rows="2" spellcheck="false" data-i18n-value="tokens.defaultText">Hello, world! Language models read text in pieces.</textarea>
+          <textarea id="tokens-input" class="text-input" rows="2" autocorrect="off" spellcheck="false" data-i18n-value="tokens.defaultText">Hello, world! Language models read text in pieces.</textarea>
           <div class="token-chips" id="tokens-out"></div>
           <p class="demo-note" id="tokens-note"></p>
         </div>
@@ -196,7 +196,7 @@
 
         <div class="demo">
           <div class="generate-controls">
-            <input id="generate-input" class="text-input" value="the cat" data-i18n-value="generate.defaultInput" spellcheck="false" data-i18n-attr="aria-label:generate.inputLabel">
+            <input id="generate-input" class="text-input" value="the cat" data-i18n-value="generate.defaultInput" autocomplete="off" autocapitalize="none" autocorrect="off" enterkeyhint="go" spellcheck="false" data-i18n-attr="aria-label:generate.inputLabel">
             <button class="btn" id="generate-start" data-i18n="generate.start">Generate</button>
             <button class="btn btn-ghost" id="generate-more" data-i18n="generate.more">10 more</button>
             <button class="btn btn-ghost" id="generate-pause" disabled data-i18n="generate.pause">Pause</button>
@@ -322,6 +322,7 @@
   <script src="js/params.js"></script>
   <script src="js/embeddings.js"></script>
   <script src="js/generation.js"></script>
+  <script src="js/demo/ui.js"></script>
   <script src="js/demo/predict.js"></script>
   <script src="js/demo/tokens.js"></script>
   <script src="js/demo/context.js"></script>

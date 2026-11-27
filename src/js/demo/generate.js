@@ -12,7 +12,7 @@
 
   window.Demos.generate = {
     init(model) {
-      const { t } = window.LLM_I18N;
+      const { t, locale } = window.LLM_I18N;
       const input = document.getElementById('generate-input');
       const startBtn = document.getElementById('generate-start');
       const moreBtn = document.getElementById('generate-more');
@@ -212,11 +212,24 @@
       resetBtn.addEventListener('click', reset);
 
       input.addEventListener('input', () => {
+        starts.current(input.value);
         if (state.mode !== 'idle') return;
         tokens = promptTokens();
         computePending();
         render();
       });
+
+      /* Готовые начала: выбрать без клавиатуры; генерация начинается с чистого листа. */
+      const starts = window.DemoUI.chipRow(t('demo.startsLabel'), locale.data.generateStarts || [], (text) => {
+        input.value = text;
+        starts.current(text);
+        reset();
+      });
+      input.closest('.generate-controls').insertAdjacentElement('afterend', starts);
+      starts.current(input.value);
+
+      /* Enter на клавиатуре телефона («Пуск») запускает генерацию. */
+      window.DemoUI.touchFriendlyInput(input, () => startBtn.click());
 
       reset();
     },

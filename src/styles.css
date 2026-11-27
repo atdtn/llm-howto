@@ -1684,3 +1684,91 @@ main:focus { outline: none; }
 @media (max-width: 400px) {
   .stage-tag { white-space: normal; }
 }
+
+/* ---------- Работа без клавиатуры (телефоны) ---------- */
+
+/* Демо при прокрутке к нему не прячется под шапкой (в т. ч. когда выезжает клавиатура). */
+.demo { scroll-margin-top: calc(var(--header-h) + 12px); }
+
+/* Ряд готовых вариантов: начала фраз, примеры текстов. */
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  margin: 10px 0 0;
+}
+
+.chip-row-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.chip {
+  min-height: 34px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--ink-soft);
+  font: 500 0.88rem/1.2 var(--sans);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.chip:hover { border-color: var(--accent); color: var(--accent-ink); }
+
+.chip[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-weight: 650;
+}
+
+.chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.generate-controls + .chip-row { margin: -6px 0 16px; }
+
+/* Варианты слов в демо 01 — кнопки: нажатие добавляет слово к фразе. */
+button.pred-row {
+  width: 100%;
+  min-height: 34px;
+  margin: 0;
+  padding: 2px 8px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+button.pred-row:hover { background: var(--accent-soft); border-color: var(--line); }
+button.pred-row:active { border-color: var(--accent); }
+button.pred-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.predict-out { gap: 4px; }
+
+.phrase-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.btn-small {
+  min-height: 34px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+/* Системная синяя подсветка нажатия на телефоне не нужна: у кнопок своё состояние. */
+.chip,
+button.pred-row,
+.cand-row.is-clickable,
+.btn,
+.icon-btn,
+.toc-toggle { -webkit-tap-highlight-color: transparent; }

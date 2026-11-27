@@ -53,11 +53,16 @@
       'toc.inside': 'Inside',
       'toc.finale': 'Wrap-up',
 
+      'demo.startsLabel': 'Start with:',
+      'tokens.examplesLabel': 'Examples:',
+      'predict.back': 'Remove word',
+      'predict.clear': 'Start over',
+      'predict.addPrefix': 'Add the word',
       'predict.title': 'The model guesses the next word',
       'predict.p1':
         'A language model is a program that reads text and predicts which word comes next. When your phone suggests the next word, you have already seen a model like this at work. A large model does the same thing, but it has read so much text that its guesses are much better.',
       'predict.p2':
-        'Try it: start a phrase, and the model will show the words it considers likely. The bars show probability: the longer the bar, the more confident the model is.',
+        'Try it: start a phrase or tap a ready-made start, and the model will show the words it considers likely. Tap a word to add it to the phrase. The bars show probability: the longer the bar, the more confident the model is.',
       'predict.inputLabel': 'Start a phrase',
       'predict.defaultInput': 'in the',
       'predict.bridge': "But first the text has to be turned into numbers. We'll get to that next.",
@@ -251,6 +256,16 @@
         apelsin: 'orange',
         banan: 'banana',
       },
+      /* Готовые начала фраз и примеры текстов: удобно на телефоне, без клавиатуры. */
+      predictStarts: ['in the', 'grandpa', 'the cat', 'the gingerbread man'],
+      generateStarts: ['the cat', 'grandpa', 'in the', 'the bear'],
+      tokenExamples: [
+        { label: 'Phrase', text: 'Hello, world! Language models read text in pieces.' },
+        { label: 'Punctuation', text: 'Wait... what?! Really?!' },
+        { label: 'Numbers', text: 'On 27.11.2026 at 9:30 I paid 15 euros.' },
+        { label: 'Hyphens', text: 'A well-known state-of-the-art model.' },
+        { label: 'Emoji', text: 'I love pizza 🍕 and cats 🐱!' },
+      ],
       attentionWords: ['The cat', 'which', 'sat', 'on', 'the windowsill', 'knocked over', 'the flower'],
       attentionNames: ['the cat', 'which', 'sat', 'on', 'the windowsill', 'knocked over', 'the flower'],
       attentionCommaAfter: [0, 4],
