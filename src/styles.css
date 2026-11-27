@@ -1765,10 +1765,17 @@ button.pred-row:focus-visible { outline: 2px solid var(--accent); outline-offset
   font-size: 0.85rem;
 }
 
-/* Системная синяя подсветка нажатия на телефоне не нужна: у кнопок своё состояние. */
-.chip,
-button.pred-row,
-.cand-row.is-clickable,
-.btn,
-.icon-btn,
-.toc-toggle { -webkit-tap-highlight-color: transparent; }
+/*
+ * Системная подсветка нажатия на телефоне (полупрозрачный прямоугольник вокруг элемента)
+ * отключена для всей страницы: у кнопок, вкладок и слов есть собственные состояния.
+ * Свойство наследуется, поэтому хватает одного правила.
+ */
+html { -webkit-tap-highlight-color: transparent; }
+
+/* Короткий отклик на нажатие вместо системного прямоугольника. */
+.context-tab:active,
+.stage-button:active,
+.chip:active,
+.btn:active,
+.icon-btn:active,
+.toc-toggle:active { transform: scale(0.97); }

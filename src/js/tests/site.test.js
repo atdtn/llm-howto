@@ -212,3 +212,8 @@ test('страницы: доступность разметки (skip-link, <mai
     assert.ok(html.includes('<noscript>'), `${code}: пояснение без JavaScript`);
   }
 });
+
+test('стили: системная подсветка нажатия на телефоне отключена для всей страницы', () => {
+  const css = fs.readFileSync(path.join(__dirname, '..', '..', 'styles.css'), 'utf8');
+  assert.ok(css.includes('html { -webkit-tap-highlight-color: transparent; }'));
+});
